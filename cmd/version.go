@@ -7,6 +7,7 @@ import (
 )
 
 var version string
+var gitCommit string
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
@@ -16,10 +17,21 @@ var versionCmd = &cobra.Command{
 			version = "unversioned"
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), version)
+		if gitCommit == "" {
+			gitCommit = "master"
+		}
+
+		short, _ := cmd.Flags().GetBool("short")
+
+		if short {
+			fmt.Fprintln(cmd.OutOrStdout(), version)
+		} else {
+			fmt.Fprintln(cmd.OutOrStdout(), "Version: "+version+"\nGit commit: "+gitCommit)
+		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(versionCmd)
+	versionCmd.Flags().BoolP("short", "s", false, "Only print version number")
 }
