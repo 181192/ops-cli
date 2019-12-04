@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-	"os/exec"
+	cmdUtil "github.com/181192/ops-cli/cmd/util"
 
 	"github.com/spf13/cobra"
 )
@@ -17,13 +16,7 @@ var helmfileCmd = &cobra.Command{
 	- Apply CI/CD to configuration changes.
 	- Periodically sync to avoid skew in environments.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		helmfile := exec.Command("helmfile", args...)
-		out, err := helmfile.Output()
-		if err != nil {
-			fmt.Fprintln(cmd.OutOrStderr(), err)
-		}
-
-		fmt.Fprintln(cmd.OutOrStdout(), string(out))
+		cmdUtil.ExecuteCmd(cmd, "helmfile", args)
 	},
 }
 
