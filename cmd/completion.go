@@ -31,12 +31,22 @@ var completionCmd = &cobra.Command{
 	Long:  "Generates shell completion scripts for the specified shell.",
 	Example: `To load completion run
 
-. <(bitbucket completion bash)
+. <(ops completion bash)
 
 To configure your bash shell to load completions for each session add to your bashrc
 
 # ~/.bashrc or ~/.profile
-. <(bitbucket completion bash)
+source <(ops completion bash)
+
+# bash >= 4.0 on osx
+brew install bash-completion@2
+ops completion bash > $(brew --prefix)/etc/bash_completion.d/ops
+
+# zsh
+source <(ops completion zsh)
+
+# zsh on osx / oh-my-zsh
+ops completion zsh > "${fpath[1]}/_ops"
 `,
 	Args:      cobra.ExactArgs(1),
 	ValidArgs: completionShellsArray(),
