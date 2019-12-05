@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	cmdUtil "github.com/181192/ops-cli/cmd/util"
+	cmdUtil "github.com/181192/ops-cli/pkg/util"
 
 	"github.com/spf13/cobra"
 )
