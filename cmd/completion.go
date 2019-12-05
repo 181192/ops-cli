@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 	"io"
+	"strings"
 
-	cmdUtil "github.com/181192/ops-cli/cmd/util"
+	cmdUtil "github.com/181192/ops-cli/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -35,11 +36,12 @@ var completionCmd = &cobra.Command{
 To configure your bash shell to load completions for each session add to your bashrc
 
 # ~/.bashrc or ~/.profile
-. <(bitbucket completion)
+. <(bitbucket completion bash)
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := runCompletion(rootCmd.OutOrStdout(), cmd, args)
-		fmt.Fprintln(cmd.OutOrStderr(), err)
+		if err := runCompletion(rootCmd.OutOrStdout(), cmd, args); err != nil {
+			fmt.Fprintln(cmd.OutOrStderr(), err)
+		}
 	},
 	ValidArgs: completionShellsArray(),
 }
@@ -49,15 +51,16 @@ func init() {
 }
 
 func runCompletion(out io.Writer, cmd *cobra.Command, args []string) error {
+	shells := strings.Join(completionShellsArray(), ", ")
 	if len(args) == 0 {
-		return cmdUtil.UsageErrorf(cmd, "Shell not specified")
+		return cmdUtil.UsageErrorf(cmd, "Shell not specified (%s)", shells)
 	}
 	if len(args) > 1 {
-		return cmdUtil.UsageErrorf(cmd, "Too many arguments. Expected only the shell type")
+		return cmdUtil.UsageErrorf(cmd, "Too many arguments. Expected only the shell type of (%s)", shells)
 	}
 	run, found := completionShells[args[0]]
 	if !found {
-		return cmdUtil.UsageErrorf(cmd, "Unsupported shell type %q.", args[0])
+		return cmdUtil.UsageErrorf(cmd, "Unsupported shell type %q. Valid shells are one of: %s", args[0], shells)
 	}
 
 	return run(out, cmd.Parent())
