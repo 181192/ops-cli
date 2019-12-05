@@ -11,6 +11,7 @@ import (
 )
 
 var cfgFile string
+var cfgFolder = getHome() + "/.ops"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -30,7 +31,16 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
+}
+
+func getHome() string {
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	return home
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -39,16 +49,13 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+
+		if _, err := os.Stat(cfgFolder); os.IsNotExist(err) {
+			os.Mkdir(cfgFolder, os.ModeDir)
 		}
 
-		// Search config in home directory with name ".ops" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".ops")
+		viper.AddConfigPath(cfgFolder)
+		viper.SetConfigName("ops")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
