@@ -9,10 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var completionShells = map[string]func(out io.Writer, cmd *cobra.Command) error{
-	"bash":       runCompletionBash,
-	"zsh":        runCompletionZsh,
-	"powershell": runCompletionPowerShell,
+var completionShells = map[string]func(out io.Writer) error{
+	"bash":       rootCmd.GenBashCompletion,
+	"zsh":        rootCmd.GenZshCompletion,
+	"powershell": rootCmd.GenPowerShellCompletion,
 }
 
 func completionShellsArray() []string {
@@ -26,10 +26,10 @@ func completionShellsArray() []string {
 
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
-	Use:                   "completion",
-	DisableFlagsInUseLine: true,
-	Short:                 "Generates shell completion scripts for the specified shell (bash, zsh or powershell)",
-	Long: `To load completion run
+	Use:   "completion [" + strings.Join(completionShellsArray(), "|") + "]",
+	Short: "Generates shell completion scripts for the specified shell",
+	Long:  "Generates shell completion scripts for the specified shell.",
+	Example: `To load completion run
 
 . <(bitbucket completion bash)
 
@@ -38,12 +38,13 @@ To configure your bash shell to load completions for each session add to your ba
 # ~/.bashrc or ~/.profile
 . <(bitbucket completion bash)
 `,
+	Args:      cobra.ExactArgs(1),
+	ValidArgs: completionShellsArray(),
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := runCompletion(rootCmd.OutOrStdout(), cmd, args); err != nil {
 			fmt.Fprintln(cmd.OutOrStderr(), err)
 		}
 	},
-	ValidArgs: completionShellsArray(),
 }
 
 func init() {
@@ -52,28 +53,10 @@ func init() {
 
 func runCompletion(out io.Writer, cmd *cobra.Command, args []string) error {
 	shells := strings.Join(completionShellsArray(), ", ")
-	if len(args) == 0 {
-		return cmdUtil.UsageErrorf(cmd, "Shell not specified (%s)", shells)
-	}
-	if len(args) > 1 {
-		return cmdUtil.UsageErrorf(cmd, "Too many arguments. Expected only the shell type of (%s)", shells)
-	}
 	run, found := completionShells[args[0]]
 	if !found {
 		return cmdUtil.UsageErrorf(cmd, "Unsupported shell type %q. Valid shells are one of: %s", args[0], shells)
 	}
 
-	return run(out, cmd.Parent())
-}
-
-func runCompletionBash(out io.Writer, rootCmd *cobra.Command) error {
-	return rootCmd.GenBashCompletion(out)
-}
-
-func runCompletionZsh(out io.Writer, rootCmd *cobra.Command) error {
-	return rootCmd.GenZshCompletion(out)
-}
-
-func runCompletionPowerShell(out io.Writer, rootCmd *cobra.Command) error {
-	return rootCmd.GenPowerShellCompletion(out)
+	return run(out)
 }
