@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
@@ -22,4 +23,19 @@ func ExecuteCmd(cmd *cobra.Command, command string, args []string) {
 	}
 
 	fmt.Fprintln(cmd.OutOrStdout(), string(out))
+}
+
+// RequireFile checks for a given file and returns an error message to user if it doesn't exists
+func RequireFile(fileName string) error {
+	if err := checkFile(fileName); err != nil {
+		return fmt.Errorf("%s\nRun 'ops download' to download external binaries", err)
+	}
+	return nil
+}
+
+func checkFile(fileName string) error {
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		return err
+	}
+	return nil
 }
