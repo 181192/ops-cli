@@ -1,4 +1,4 @@
-package util
+package github
 
 import (
 	"io"
@@ -9,7 +9,7 @@ import (
 	getter "github.com/hashicorp/go-getter"
 )
 
-// defaultProgressBar is the default instance of a cheggaaa
+// DefaultProgressBar is the default instance of a cheggaaa
 // progress bar.
 var DefaultProgressBar getter.ProgressTracker = &ProgressBar{}
 
@@ -29,6 +29,7 @@ type ProgressBar struct {
 	pbs int
 }
 
+// ProgressBarConfig config
 func ProgressBarConfig(bar *pb.ProgressBar, prefix string) {
 	bar.SetUnits(pb.U_BYTES)
 	bar.Prefix(prefix)
