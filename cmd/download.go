@@ -15,7 +15,6 @@ Will download the given versions in the config file if presents
 	Run: func(cmd *cobra.Command, args []string) {
 		newHelmfileRelease().DownloadIfNotExists()
 		newHelmRelease().DownloadIfNotExists()
-		newKubectlRelease().DownloadIfNotExists()
 	},
 }
 
