@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	gh "github.com/181192/ops-cli/pkg/github"
-
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +13,8 @@ var downloadCmd = &cobra.Command{
 Will download the given versions in the config file if presents
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		gh.DownloadIfNotExists(getHelmfileRelease())
+		newHelmfileRelease().DownloadIfNotExists()
+		newHelmRelease().DownloadIfNotExists()
 	},
 }
 
