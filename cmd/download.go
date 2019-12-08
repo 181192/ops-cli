@@ -16,6 +16,7 @@ Will download the given versions in the config file if presents
 		newHelmfileRelease().DownloadIfNotExists()
 		newHelmRelease().DownloadIfNotExists()
 		newKubectlRelease().DownloadIfNotExists()
+		newTerraformRelease().DownloadIfNotExists()
 	},
 }
 
