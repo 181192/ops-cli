@@ -20,7 +20,7 @@ var (
 	configContext string
 	namespace     string
 	label         string
-	port          string
+	port          int
 )
 
 // dashboardCmd represents the dashboard command
@@ -49,7 +49,7 @@ var dashboardCmd = &cobra.Command{
 
 		// only use the first pod in the list
 		return portForward(pl.Items[0].Name, namespace, "Pod",
-			"http://localhost:%d", 8080, client, cmd.OutOrStdout())
+			"http://localhost:%d", port, client, cmd.OutOrStdout())
 	},
 }
 
@@ -65,8 +65,11 @@ func init() {
 	dashboardCmd.PersistentFlags().StringVar(&configContext, "context", "", "The name of the kubeconfig context to use")
 	dashboardCmd.PersistentFlags().StringVarP(&namespace, "namespace", "n", v1.NamespaceAll, "Config namespace")
 
+	dashboardCmd.MarkFlagRequired("label")
 	dashboardCmd.Flags().StringVarP(&label, "label", "l", "", "key=value")
-	dashboardCmd.Flags().StringVarP(&port, "port", "p", "", "container port")
+
+	dashboardCmd.MarkFlagRequired("port")
+	dashboardCmd.Flags().IntVarP(&port, "port", "p", 0, "container port")
 }
 
 func grafanaDashCmd() *cobra.Command {
