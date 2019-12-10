@@ -11,7 +11,8 @@ var gitCommit string
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Output the version of sail",
+	Short: "Output the version",
+	Long:  "Output the version.",
 	Run: func(cmd *cobra.Command, args []string) {
 		if version == "" {
 			version = "unversioned"

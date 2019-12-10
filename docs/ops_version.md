@@ -1,10 +1,10 @@
 ## ops version
 
-Output the version of sail
+Output the version
 
 ### Synopsis
 
-Output the version of sail
+Output the version.
 
 ```
 ops version [flags]
