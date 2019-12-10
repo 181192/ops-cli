@@ -1,4 +1,4 @@
-.PHONY: clean build deps run test-build
+.PHONY: clean build deps run test-build docs
 
 deps:
 	go mod tidy
@@ -31,3 +31,6 @@ docker-build:
 
 docker-run:
 	docker run --rm ops-cli:latest version
+
+docs:
+	go run docs/docs.go
