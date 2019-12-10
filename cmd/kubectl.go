@@ -57,7 +57,7 @@ var kubectlCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(kubectlCmd)
+	RootCmd.AddCommand(kubectlCmd)
 }
 
 func (release *kubectlRelease) setDownloadURL() *kubectlRelease {

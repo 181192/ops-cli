@@ -54,7 +54,7 @@ var dashboardCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(dashboardCmd)
+	RootCmd.AddCommand(dashboardCmd)
 
 	dashboardCmd.AddCommand(kialiDashCmd())
 	dashboardCmd.AddCommand(promDashCmd())

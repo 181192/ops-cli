@@ -49,5 +49,5 @@ var helmfileCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(helmfileCmd)
+	RootCmd.AddCommand(helmfileCmd)
 }

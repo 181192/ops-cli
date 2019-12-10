@@ -55,7 +55,7 @@ var helmCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(helmCmd)
+	RootCmd.AddCommand(helmCmd)
 }
 
 // https://get.helm.sh/helm-v3.0.1-linux-amd64.tar.gz
