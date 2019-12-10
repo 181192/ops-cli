@@ -32,6 +32,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
+	rootCmd.PersistentFlags().MarkHidden("config")
 }
 
 func getHome() string {
@@ -62,6 +63,6 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		// fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 }
