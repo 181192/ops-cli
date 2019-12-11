@@ -96,8 +96,20 @@ func grafanaDashCmd() *cobra.Command {
 				return errors.New("no Grafana pods found")
 			}
 
+			var pod v1.Pod
+
+			for _, p := range pl.Items {
+				if p.Status.Phase == "Running" {
+					pod = p
+				}
+			}
+
+			if pod.Name == "" {
+				return errors.New("no running Grafana pods found")
+			}
+
 			// only use the first pod in the list
-			return portForward(pl.Items[0].Name, namespace, "Grafana",
+			return portForward(pod.Name, namespace, "Grafana",
 				"http://localhost:%d", 3000, client, cmd.OutOrStdout())
 		},
 	}
@@ -194,7 +206,6 @@ func jaegerDashCmd() *cobra.Command {
 			if len(pl.Items) < 1 {
 				return errors.New("no Jaeger pods found")
 			}
-
 			// only use the first pod in the list
 			return portForward(pl.Items[0].Name, namespace, "Jaeger",
 				"http://localhost:%d", 16686, client, cmd.OutOrStdout())
