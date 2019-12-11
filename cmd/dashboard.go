@@ -83,6 +83,10 @@ func grafanaDashCmd() *cobra.Command {
 				return fmt.Errorf("failed to create k8s client: %v", err)
 			}
 
+			if namespace == "" {
+				namespace = "monitoring"
+			}
+
 			pl, err := client.PodsForSelector(namespace, "app=grafana")
 			if err != nil {
 				return fmt.Errorf("not able to locate Grafana pod: %v", err)
@@ -110,6 +114,10 @@ func promDashCmd() *cobra.Command {
 			client, err := kubernetes.NewClient(kubeconfig, configContext)
 			if err != nil {
 				return fmt.Errorf("failed to create k8s client: %v", err)
+			}
+
+			if namespace == "" {
+				namespace = "monitoring"
 			}
 
 			pl, err := client.PodsForSelector(namespace, "app=prometheus")
@@ -141,6 +149,10 @@ func kialiDashCmd() *cobra.Command {
 				return fmt.Errorf("failed to create k8s client: %v", err)
 			}
 
+			if namespace == "" {
+				namespace = "istio-system"
+			}
+
 			pl, err := client.PodsForSelector(namespace, "app=kiali")
 			if err != nil {
 				return fmt.Errorf("not able to locate Kiali pod: %v", err)
@@ -168,6 +180,10 @@ func jaegerDashCmd() *cobra.Command {
 			client, err := kubernetes.NewClient(kubeconfig, configContext)
 			if err != nil {
 				return fmt.Errorf("failed to create k8s client: %v", err)
+			}
+
+			if namespace == "" {
+				namespace = "istio-system"
 			}
 
 			pl, err := client.PodsForSelector(namespace, "app=jaeger")
