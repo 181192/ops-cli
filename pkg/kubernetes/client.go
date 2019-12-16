@@ -8,12 +8,24 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+
+	"k8s.io/client-go/kubernetes"
 )
 
 // Client is a helper wrapper around the Kube RESTClient for istioctl -> Pilot/Envoy/Mesh related things
 type Client struct {
 	Config *rest.Config
 	*rest.RESTClient
+}
+
+// NewClientset creates a new Clientset for the given config.
+func NewClientset(client *Client) (*kubernetes.Clientset, error) {
+	clientset, err := kubernetes.NewForConfig(client.Config)
+	if err != nil {
+		return nil, err
+	}
+
+	return clientset, nil
 }
 
 // NewClient is the constructor for the client wrapper
