@@ -6,7 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes/scheme"
 
-	aks "github.com/181192/ops-cli/pkg/apis/aks"
+	aks "github.com/181192/ops-cli/pkg/gen/apis/aks"
 )
 
 // Conventional Kubernetes API contants
