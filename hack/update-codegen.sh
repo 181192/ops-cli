@@ -24,5 +24,5 @@ rootdir=$( cd "$bindir"/.. && pwd )
 # run the code-generator entrypoint script
 "$rootdir"/vendor/k8s.io/code-generator/generate-groups.sh deepcopy "$ROOT_PACKAGE/pkg/gen/client" "$ROOT_PACKAGE/pkg/gen/apis" "$CUSTOM_RESOURCE_NAME:$CUSTOM_RESOURCE_VERSION" $@
 
-
 cp -r $HOME/go/src/github.com/181192/ops-cli/pkg/gen "$rootdir"/pkg
+rm -rf $HOME/go/src/github.com/181192/ops-cli
