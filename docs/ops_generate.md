@@ -1,20 +1,19 @@
-## ops version
+## ops generate
 
-Output the version
+Generate resource(s)
 
 ### Synopsis
 
-Output the version.
+Generate resource(s).
 
 ```
-ops version [flags]
+ops generate [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help    help for version
-  -s, --short   Only print version number
+  -h, --help   help for generate
 ```
 
 ### SEE ALSO

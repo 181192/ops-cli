@@ -1,19 +1,19 @@
-## ops dashboard kiali
+## ops dashboard alertmanager
 
-Open Kiali web UI
+Open Alertmanager web UI
 
 ### Synopsis
 
-Open Istio's Kiali dashboard
+Open Alertmanager dashboard
 
 ```
-ops dashboard kiali [flags]
+ops dashboard alertmanager [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for kiali
+  -h, --help   help for alertmanager
 ```
 
 ### Options inherited from parent commands

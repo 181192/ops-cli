@@ -1,20 +1,19 @@
-## ops version
+## ops enable
 
-Output the version
+Enable resource(s)
 
 ### Synopsis
 
-Output the version.
+Enable resource(s).
 
 ```
-ops version [flags]
+ops enable [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help    help for version
-  -s, --short   Only print version number
+  -h, --help   help for enable
 ```
 
 ### SEE ALSO

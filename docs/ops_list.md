@@ -1,20 +1,19 @@
-## ops version
+## ops list
 
-Output the version
+List resource(s)
 
 ### Synopsis
 
-Output the version.
+List resource(s).
 
 ```
-ops version [flags]
+ops list [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help    help for version
-  -s, --short   Only print version number
+  -h, --help   help for list
 ```
 
 ### SEE ALSO
