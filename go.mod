@@ -7,8 +7,11 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/hashicorp/go-getter v1.4.0
 	github.com/hashicorp/go-version v1.2.0 // indirect
+	github.com/kris-nova/logger v0.0.0-20181127235838-fd0d87064b06
+	github.com/kris-nova/lolgopher v0.0.0-20180921204813-313b3abb0d9b // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pelletier/go-toml v1.6.0 // indirect
+	github.com/pkg/errors v0.8.0
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/spf13/cobra v0.0.5
