@@ -6,7 +6,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes/scheme"
 
-	api "github.com/181192/ops-cli/pkg/api"
+	aks "github.com/181192/ops-cli/pkg/apis/aks"
 )
 
 // Conventional Kubernetes API contants
@@ -17,9 +17,13 @@ const (
 
 // Conventional Kubernetes API variables
 var (
-	SchemeGroupVersion = schema.GroupVersion{Group: api.GroupName, Version: CurrentGroupVersion}
-	SchemeBuilder      = runtime.NewSchemeBuilder(addKnownTypes)
-	AddToScheme        = SchemeBuilder.AddToScheme
+	SchemeGroupVersion = schema.GroupVersion{
+		Group:   aks.GroupName,
+		Version: CurrentGroupVersion,
+	}
+
+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
+	AddToScheme   = SchemeBuilder.AddToScheme
 )
 
 // Kind takes an unqualified kind and returns back a Group qualified GroupKind

@@ -1,6 +1,6 @@
-package api
+package aks
 
 // Conventional Kubernetes API contants
 const (
-	GroupName = "ops.cli"
+	GroupName = "stacc.io"
 )

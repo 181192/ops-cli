@@ -4,6 +4,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// +genclient
+// +genclient:noStatus
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
 const (
 	// Version1_15 represents Kubernetes version 1.15.x
 	Version1_15 = "1.15"
@@ -32,7 +36,19 @@ type ClusterMeta struct {
 type ClusterConfig struct {
 	metav1.TypeMeta `json:",inline"`
 
-	Metadata *ClusterMeta `json:"metadata"`
+	ClusterMeta *ClusterMeta `json:"clusterMetadata"`
+
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+}
+
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+
+// ClusterConfigList is a list of ClusterConfigs
+type ClusterConfigList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata"`
+
+	Items []ClusterConfig `json:"items"`
 }
 
 // ClusterConfigTypeMeta constructs TypeMeta for ClusterConfig
@@ -49,7 +65,7 @@ func ClusterConfigTypeMeta() metav1.TypeMeta {
 func NewClusterConfig() *ClusterConfig {
 	cfg := &ClusterConfig{
 		TypeMeta: ClusterConfigTypeMeta(),
-		Metadata: &ClusterMeta{
+		ClusterMeta: &ClusterMeta{
 			Version: DefaultVersion,
 		},
 	}
