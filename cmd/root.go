@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/181192/ops-cli/pkg/cmd/create"
+	"github.com/181192/ops-cli/pkg/cmd/enable"
+	"github.com/181192/ops-cli/pkg/cmd/generate"
+	"github.com/181192/ops-cli/pkg/cmd/list"
+
 	"github.com/181192/ops-cli/pkg/cmd/dashboard"
 
 	"github.com/spf13/cobra"
@@ -41,7 +46,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
 	rootCmd.PersistentFlags().MarkHidden("config")
 
+	rootCmd.AddCommand(create.Command())
 	rootCmd.AddCommand(dashboard.Command())
+	rootCmd.AddCommand(enable.Command())
+	rootCmd.AddCommand(generate.Command())
+	rootCmd.AddCommand(list.Command())
 }
 
 func getHome() string {
