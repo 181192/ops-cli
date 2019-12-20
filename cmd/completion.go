@@ -10,9 +10,9 @@ import (
 )
 
 var completionShells = map[string]func(out io.Writer) error{
-	"bash":       RootCmd.GenBashCompletion,
-	"zsh":        RootCmd.GenZshCompletion,
-	"powershell": RootCmd.GenPowerShellCompletion,
+	"bash":       rootCmd.GenBashCompletion,
+	"zsh":        rootCmd.GenZshCompletion,
+	"powershell": rootCmd.GenPowerShellCompletion,
 }
 
 func completionShellsArray() []string {
@@ -51,14 +51,14 @@ ops completion zsh > "${fpath[1]}/_ops"
 	Args:      cobra.ExactArgs(1),
 	ValidArgs: completionShellsArray(),
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := runCompletion(RootCmd.OutOrStdout(), cmd, args); err != nil {
+		if err := runCompletion(rootCmd.OutOrStdout(), cmd, args); err != nil {
 			fmt.Fprintln(cmd.OutOrStderr(), err)
 		}
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(completionCmd)
+	rootCmd.AddCommand(completionCmd)
 }
 
 func runCompletion(out io.Writer, cmd *cobra.Command, args []string) error {

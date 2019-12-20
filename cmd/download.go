@@ -21,5 +21,5 @@ Will download the given versions in the config file if presents
 }
 
 func init() {
-	RootCmd.AddCommand(downloadCmd)
+	rootCmd.AddCommand(downloadCmd)
 }

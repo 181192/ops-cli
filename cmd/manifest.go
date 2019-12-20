@@ -15,7 +15,15 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-var applyManifest bool
+var (
+	labelSelector = ""
+	applyManifest bool
+	kubeconfig    string
+	configContext string
+	namespace     string
+	label         string
+	port          int
+)
 
 // manifestCmd represents the manifest command
 var manifestCmd = &cobra.Command{
@@ -33,7 +41,7 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	RootCmd.AddCommand(manifestCmd)
+	rootCmd.AddCommand(manifestCmd)
 
 	manifestCmd.AddCommand(manifestNamespacedTillerCmd())
 	manifestCmd.PersistentFlags().StringVarP(&kubeconfig, "kubeconfig", "c", "", "Kubernetes configuration file")
