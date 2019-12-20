@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/181192/ops-cli/pkg/cmd/dashboard"
+
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -13,17 +15,22 @@ import (
 var cfgFile string
 var cfgFolder = getHome() + "/.ops"
 
-// RootCmd represents the base command when called without any subcommands
-var RootCmd = &cobra.Command{
+// rootCmd represents the base command when called without any subcommands
+var rootCmd = &cobra.Command{
 	Use:   "ops",
 	Short: "ops-cli is a wrapper for devops tools",
 	Long:  `A wrapper for multiple devops tools...`,
 }
 
+// NewRootCmd returns a new root cmd
+func NewRootCmd() *cobra.Command {
+	return rootCmd
+}
+
 // Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the RootCmd.
+// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -31,8 +38,10 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
-	RootCmd.PersistentFlags().MarkHidden("config")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
+	rootCmd.PersistentFlags().MarkHidden("config")
+
+	rootCmd.AddCommand(dashboard.Command())
 }
 
 func getHome() string {
