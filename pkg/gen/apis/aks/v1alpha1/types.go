@@ -59,9 +59,7 @@ func ClusterConfigTypeMeta() metav1.TypeMeta {
 	}
 }
 
-// NewClusterConfig creates new config for a cluster;
-// it doesn't include initial nodegroup, so user must
-// call NewNodeGroup to create one
+// NewClusterConfig creates new config for a cluster
 func NewClusterConfig() *ClusterConfig {
 	cfg := &ClusterConfig{
 		TypeMeta: ClusterConfigTypeMeta(),
