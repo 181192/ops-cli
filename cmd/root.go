@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/181192/ops-cli/pkg/cmd/ssh"
+
 	"github.com/181192/ops-cli/pkg/cmd/create"
 	"github.com/181192/ops-cli/pkg/cmd/enable"
 	"github.com/181192/ops-cli/pkg/cmd/generate"
@@ -51,6 +53,7 @@ func init() {
 	rootCmd.AddCommand(enable.Command())
 	rootCmd.AddCommand(generate.Command())
 	rootCmd.AddCommand(list.Command())
+	rootCmd.AddCommand(ssh.Command())
 }
 
 func getHome() string {
