@@ -1,7 +1,10 @@
-.PHONY: clean build deps run test-build docs test
+.PHONY: clean clean-deps build deps run test-build docs test
+
+clean-deps:
+	go mod tidy
 
 deps:
-	go mod tidy
+	go mod download
 
 test-build:
 	CGO_ENABLED=0 go build -o build/ops -ldflags "-X 'github.com/181192/ops-cli/cmd.version=v0.1.0' -X 'github.com/181192/ops-cli/cmd.gitCommit=$$(git rev-parse --short HEAD)'"
@@ -19,7 +22,7 @@ build:
 			done; \
 	done;
 
-clean:
+clean: clean-deps
 	go clean
 	rm -rf ./build
 
