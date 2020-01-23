@@ -5,6 +5,8 @@ ARG GOOS=linux
 ARG GOARCH=amd64
 ARG LDFLAGS
 
+RUN apk add --no-cache git ca-certificates openssh bash
+
 WORKDIR /app
 
 COPY go.mod .
@@ -16,7 +18,7 @@ COPY . .
 RUN GOOS=${GOOS} GOARCH=${GOARCH} go build \
   ${LDFLAGS} \
   -ldflags " \
-  -X 'github.com/181192/ops-cli/cmd.version=v0.1.0' \
+  -X 'github.com/181192/ops-cli/cmd.version=$(git describe --tags --abbrev=0)' \
   -X 'github.com/181192/ops-cli/cmd.gitCommit=$(git rev-parse HEAD)'" \
   -o "ops-cli" .
 
@@ -35,4 +37,3 @@ RUN chown -R app:app ./
 USER app
 
 ENTRYPOINT ["./ops-cli"]
-CMD ["version"]
