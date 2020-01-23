@@ -28,3 +28,10 @@ func RegisterAndRun(t *testing.T) {
 		RunSpecs(t, suitePath)
 	}
 }
+
+// SkipCI test if CI is enabled
+func SkipCI(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping testing in CI environment")
+	}
+}

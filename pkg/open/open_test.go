@@ -1,8 +1,13 @@
 package open
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/181192/ops-cli/pkg/testutils"
+)
 
 func TestRun(t *testing.T) {
+	testutils.SkipCI(t)
 	// shouldn't error
 	input := "https://google.com/"
 	err := Run(input)
@@ -19,6 +24,7 @@ func TestRun(t *testing.T) {
 }
 
 func TestStart(t *testing.T) {
+	testutils.SkipCI(t)
 	// shouldn't error
 	input := "https://google.com/"
 	err := Start(input)
@@ -35,6 +41,7 @@ func TestStart(t *testing.T) {
 }
 
 func TestRunWith(t *testing.T) {
+	testutils.SkipCI(t)
 	// shouldn't error
 	input := "https://google.com/"
 	app := "firefox"
@@ -52,6 +59,7 @@ func TestRunWith(t *testing.T) {
 }
 
 func TestStartWith(t *testing.T) {
+	testutils.SkipCI(t)
 	// shouldn't error
 	input := "https://google.com/"
 	app := "firefox"
