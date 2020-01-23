@@ -10,12 +10,12 @@ test-build:
 build:
 	for arch in amd64; do \
 			for os in linux darwin windows; do \
-				CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -o "build/ops_cli_"$$os"_$$arch" $(LDFLAGS) -ldflags "-X 'github.com/181192/ops-cli/cmd.version=v0.1.0' -X 'github.com/181192/ops-cli/cmd.gitCommit=$$(git rev-parse --short HEAD)'"; \
+				CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -v -o "build/ops_cli_"$$os"_$$arch" $(LDFLAGS) -ldflags "-X 'github.com/181192/ops-cli/cmd.version=v0.1.0' -X 'github.com/181192/ops-cli/cmd.gitCommit=$$(git rev-parse --short HEAD)'"; \
 			done; \
 		done;
 		for arch in arm arm64; do \
 			for os in linux; do \
-				CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -o "build/ops_cli_"$$os"_$$arch" $(LDFLAGS) -ldflags "-X 'github.com/181192/ops-cli/cmd.version=v0.1.0' -X 'github.com/181192/ops-cli/cmd.gitCommit=$$(git rev-parse --short HEAD)'"; \
+				CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -v -o "build/ops_cli_"$$os"_$$arch" $(LDFLAGS) -ldflags "-X 'github.com/181192/ops-cli/cmd.version=v0.1.0' -X 'github.com/181192/ops-cli/cmd.gitCommit=$$(git rev-parse --short HEAD)'"; \
 			done; \
 	done;
 
