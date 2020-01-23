@@ -9,3 +9,5 @@
 build/
 vendor/
 examples/
+.envrc
+.grenrc.yaml
