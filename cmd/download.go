@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 )
 
@@ -21,5 +23,7 @@ Will download the given versions in the config file if presents
 }
 
 func init() {
-	rootCmd.AddCommand(downloadCmd)
+	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(downloadCmd)
+	}
 }

@@ -46,11 +46,13 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
 	rootCmd.PersistentFlags().MarkHidden("config")
 
-	rootCmd.AddCommand(create.Command())
 	rootCmd.AddCommand(dashboard.Command())
-	rootCmd.AddCommand(enable.Command())
-	rootCmd.AddCommand(generate.Command())
-	rootCmd.AddCommand(list.Command())
+	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(create.Command())
+		rootCmd.AddCommand(enable.Command())
+		rootCmd.AddCommand(generate.Command())
+		rootCmd.AddCommand(list.Command())
+	}
 }
 
 func getHome() string {

@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/181192/ops-cli/pkg/download"
 	cmdUtil "github.com/181192/ops-cli/pkg/util"
 
@@ -49,5 +51,7 @@ var helmfileCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(helmfileCmd)
+	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(helmfileCmd)
+	}
 }

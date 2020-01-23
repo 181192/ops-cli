@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/181192/ops-cli/pkg/kubernetes"
 	"github.com/ghodss/yaml"
@@ -41,14 +42,15 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
-	rootCmd.AddCommand(manifestCmd)
+	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(manifestCmd)
 
-	manifestCmd.AddCommand(manifestNamespacedTillerCmd())
-	manifestCmd.PersistentFlags().StringVarP(&kubeconfig, "kubeconfig", "c", "", "Kubernetes configuration file")
-	manifestCmd.PersistentFlags().StringVar(&configContext, "context", "", "The name of the kubeconfig context to use")
-	manifestCmd.PersistentFlags().StringVarP(&namespace, "namespace", "n", corev1.NamespaceAll, "Config namespace")
-	manifestCmd.PersistentFlags().BoolVar(&applyManifest, "apply", false, "Apply kubernetes manifests to cluster")
-
+		manifestCmd.AddCommand(manifestNamespacedTillerCmd())
+		manifestCmd.PersistentFlags().StringVarP(&kubeconfig, "kubeconfig", "c", "", "Kubernetes configuration file")
+		manifestCmd.PersistentFlags().StringVar(&configContext, "context", "", "The name of the kubeconfig context to use")
+		manifestCmd.PersistentFlags().StringVarP(&namespace, "namespace", "n", corev1.NamespaceAll, "Config namespace")
+		manifestCmd.PersistentFlags().BoolVar(&applyManifest, "apply", false, "Apply kubernetes manifests to cluster")
+	}
 }
 
 func manifestNamespacedTillerCmd() *cobra.Command {

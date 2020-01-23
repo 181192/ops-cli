@@ -61,7 +61,9 @@ var terraformCmd = &cobra.Command{
 // https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_windows_amd64.zip
 
 func init() {
-	rootCmd.AddCommand(terraformCmd)
+	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(terraformCmd)
+	}
 }
 
 func (release *terraformRelease) setDownloadURL() *terraformRelease {

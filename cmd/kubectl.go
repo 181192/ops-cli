@@ -57,7 +57,9 @@ var kubectlCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(kubectlCmd)
+	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(kubectlCmd)
+	}
 }
 
 func (release *kubectlRelease) setDownloadURL() *kubectlRelease {
