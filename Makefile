@@ -1,4 +1,4 @@
-.PHONY: clean build deps run test-build docs
+.PHONY: clean build deps run test-build docs test
 
 deps:
 	go mod tidy
