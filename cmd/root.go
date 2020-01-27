@@ -43,20 +43,21 @@ func Execute() {
 }
 
 func init() {
+	cobra.EnableCommandSorting = false
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
-	rootCmd.PersistentFlags().MarkHidden("config")
 
-	rootCmd.AddCommand(completion.Command(rootCmd))
 	rootCmd.AddCommand(dashboard.Command())
-
 	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(enable.Command())
 		rootCmd.AddCommand(download.Command())
 		rootCmd.AddCommand(create.Command())
-		rootCmd.AddCommand(enable.Command())
 		rootCmd.AddCommand(generate.Command())
 		rootCmd.AddCommand(list.Command())
 	}
+	rootCmd.AddCommand(completion.Command(rootCmd))
+
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
+	rootCmd.PersistentFlags().MarkHidden("config")
 }
 
 func getHome() string {
