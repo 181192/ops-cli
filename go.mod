@@ -5,7 +5,6 @@ go 1.12
 require (
 	github.com/aws/aws-sdk-go v1.24.1 // indirect
 	github.com/cheggaaa/pb v1.0.27
-	github.com/ghodss/yaml v1.0.0
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/googleapis/gnostic v0.3.1 // indirect

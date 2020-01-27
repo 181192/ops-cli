@@ -1,4 +1,4 @@
-package cmd
+package download
 
 import (
 	"fmt"
@@ -54,12 +54,6 @@ var kubectlCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cmdUtil.ExecuteCmd(cmd, kubectlBinary, args)
 	},
-}
-
-func init() {
-	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
-		rootCmd.AddCommand(kubectlCmd)
-	}
 }
 
 func (release *kubectlRelease) setDownloadURL() *kubectlRelease {

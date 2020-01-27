@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/181192/ops-cli/pkg/cmd/completion"
 	"github.com/181192/ops-cli/pkg/cmd/create"
+	"github.com/181192/ops-cli/pkg/cmd/dashboard"
+	"github.com/181192/ops-cli/pkg/cmd/download"
 	"github.com/181192/ops-cli/pkg/cmd/enable"
 	"github.com/181192/ops-cli/pkg/cmd/generate"
 	"github.com/181192/ops-cli/pkg/cmd/list"
-
-	"github.com/181192/ops-cli/pkg/cmd/dashboard"
 
 	"github.com/spf13/cobra"
 
@@ -46,8 +47,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
 	rootCmd.PersistentFlags().MarkHidden("config")
 
+	rootCmd.AddCommand(completion.Command(rootCmd))
 	rootCmd.AddCommand(dashboard.Command())
+
 	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		rootCmd.AddCommand(download.Command())
 		rootCmd.AddCommand(create.Command())
 		rootCmd.AddCommand(enable.Command())
 		rootCmd.AddCommand(generate.Command())

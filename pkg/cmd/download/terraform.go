@@ -1,4 +1,4 @@
-package cmd
+package download
 
 import (
 	"fmt"
@@ -59,12 +59,6 @@ var terraformCmd = &cobra.Command{
 // https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_linux_amd64.zip
 // https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_darwin_amd64.zip
 // https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_windows_amd64.zip
-
-func init() {
-	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
-		rootCmd.AddCommand(terraformCmd)
-	}
-}
 
 func (release *terraformRelease) setDownloadURL() *terraformRelease {
 	if release.Version == "latest" {

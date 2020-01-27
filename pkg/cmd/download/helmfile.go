@@ -1,8 +1,6 @@
-package cmd
+package download
 
 import (
-	"os"
-
 	"github.com/181192/ops-cli/pkg/download"
 	cmdUtil "github.com/181192/ops-cli/pkg/util"
 
@@ -48,10 +46,4 @@ var helmfileCmd = &cobra.Command{
 		// TODO add --helm-binary flag as default
 		cmdUtil.ExecuteCmd(cmd, helmfileBinary, args)
 	},
-}
-
-func init() {
-	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
-		rootCmd.AddCommand(helmfileCmd)
-	}
 }

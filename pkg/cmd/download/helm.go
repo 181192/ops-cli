@@ -1,4 +1,4 @@
-package cmd
+package download
 
 import (
 	"fmt"
@@ -52,12 +52,6 @@ var helmCmd = &cobra.Command{
 		// TODO Set chache, configuration and data paths
 		cmdUtil.ExecuteCmd(cmd, helmBinary, args)
 	},
-}
-
-func init() {
-	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
-		rootCmd.AddCommand(helmCmd)
-	}
 }
 
 // https://get.helm.sh/helm-v3.0.1-linux-amd64.tar.gz
