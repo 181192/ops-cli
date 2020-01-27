@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
+	"github.com/spf13/pflag"
+
 	"github.com/spf13/afero"
 
 	"github.com/181192/ops-cli/pkg/gitops"
@@ -59,6 +62,8 @@ func enableProfileCmd() *cobra.Command {
 			// 	return fmt.Errorf("failed to create k8s client: %v", err)
 			// }
 
+			// opts := configureProfileCmd(cmd)
+
 			profileName := getNameArg(args)
 
 			opts := &ProfileOptions{
@@ -75,6 +80,19 @@ func enableProfileCmd() *cobra.Command {
 	}
 
 	return cmd
+}
+
+func configureProfileCmd(cmd *cmdutils.Cmd) *ProfileOptions {
+	var opts ProfileOptions
+
+	cmd.FlagSetGroup.InFlagSet("Enable profile", func(fs *pflag.FlagSet) {
+		cmdutils.AddCommonFlagsForGit(fs, &opts.gitOptions)
+	})
+	cmd.FlagSetGroup.InFlagSet("General", func(fs *pflag.FlagSet) {
+		fs.StringVar(&cmd.ClusterConfig.ObjectMeta.Name, "cluster", "", "name of the cluster")
+	})
+
+	return &opts
 }
 
 func doEnableProfile(cmd *cobra.Command, opts *ProfileOptions) error {
