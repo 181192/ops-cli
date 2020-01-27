@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	api "github.com/181192/ops-cli/pkg/gen/apis/aks/v1alpha1"
+	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
 	"github.com/kris-nova/logger"
 	"github.com/pkg/errors"
 )
@@ -22,10 +22,10 @@ type TemplateParameters struct {
 }
 
 // NewTemplateParameters creates a set of variables for templating given a ClusterConfig object
-func NewTemplateParameters(clusterConfig *api.ClusterConfig) TemplateParameters {
+func NewTemplateParameters(clusterConfig *api.AKSClusterConfig) TemplateParameters {
 	return TemplateParameters{
-		ClusterName: clusterConfig.ClusterMeta.Name,
-		Region:      clusterConfig.ClusterMeta.Region,
+		ClusterName: clusterConfig.ObjectMeta.Name,
+		Region:      clusterConfig.Spec.Region,
 	}
 }
 

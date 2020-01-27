@@ -13,12 +13,12 @@ import (
 	"github.com/181192/ops-cli/pkg/gitops"
 	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
 
-	api "github.com/181192/ops-cli/pkg/gen/apis/aks/v1alpha1"
+	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +39,7 @@ func (opts ProfileOptions) Validate() error {
 // GetNameArg tests to ensure there is only 1 name argument
 func getNameArg(args []string) string {
 	if len(args) > 1 {
-		log.Fatal("only one argument is allowed to be used as a name")
+		logger.Fatal("only one argument is allowed to be used as a name")
 		os.Exit(1)
 	}
 	if len(args) == 1 {
@@ -99,7 +99,7 @@ func doEnableProfile(cmd *cobra.Command, opts *ProfileOptions) error {
 	}
 
 	usersRepoDir, err := ioutil.TempDir("", usersRepoName+"-")
-	log.Debugf("Directory %s will be used to clone the configuration repository and install the profile", usersRepoDir)
+	logger.Debugf("Directory %s will be used to clone the configuration repository and install the profile", usersRepoDir)
 	profileOutputPath := filepath.Join(usersRepoDir, "base")
 
 	gitClient := git.NewGitClient(git.ClientParams{
@@ -118,7 +118,7 @@ func doEnableProfile(cmd *cobra.Command, opts *ProfileOptions) error {
 		return err
 	}
 
-	clusterConfig := api.NewClusterConfig()
+	clusterConfig := api.NewAKSClusterConfig("", "", api.AKSClusterConfig{})
 	clusterConfig.Name = "test"
 
 	profile := &gitops.Profile{
