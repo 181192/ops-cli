@@ -1,4 +1,3 @@
 // +k8s:deepcopy-gen=package
-// +groupName=stacc.io
-
+// +groupName=opscli.io
 package v1alpha1

@@ -41,3 +41,9 @@ docker-run:
 
 docs:
 	go run docs/docs.go
+
+generate:
+	go run pkg/codegen/main.go
+
+generate-cleanup:
+	go run pkg/codegen/cleanup/main.go
