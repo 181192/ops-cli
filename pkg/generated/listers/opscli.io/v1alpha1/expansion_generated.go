@@ -21,7 +21,3 @@ package v1alpha1
 // AKSClusterConfigListerExpansion allows custom methods to be added to
 // AKSClusterConfigLister.
 type AKSClusterConfigListerExpansion interface{}
-
-// ClusterConfigListerExpansion allows custom methods to be added to
-// ClusterConfigLister.
-type ClusterConfigListerExpansion interface{}

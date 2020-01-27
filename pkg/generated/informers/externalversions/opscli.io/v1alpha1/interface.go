@@ -26,8 +26,6 @@ import (
 type Interface interface {
 	// AKSClusterConfigs returns a AKSClusterConfigInformer.
 	AKSClusterConfigs() AKSClusterConfigInformer
-	// ClusterConfigs returns a ClusterConfigInformer.
-	ClusterConfigs() ClusterConfigInformer
 }
 
 type version struct {
@@ -44,9 +42,4 @@ func New(f internalinterfaces.SharedInformerFactory, namespace string, tweakList
 // AKSClusterConfigs returns a AKSClusterConfigInformer.
 func (v *version) AKSClusterConfigs() AKSClusterConfigInformer {
 	return &aKSClusterConfigInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
-}
-
-// ClusterConfigs returns a ClusterConfigInformer.
-func (v *version) ClusterConfigs() ClusterConfigInformer {
-	return &clusterConfigInformer{factory: v.factory, tweakListOptions: v.tweakListOptions}
 }

@@ -55,8 +55,6 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 	// Group=opscli.io, Version=v1alpha1
 	case v1alpha1.SchemeGroupVersion.WithResource("aksclusterconfigs"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Opscli().V1alpha1().AKSClusterConfigs().Informer()}, nil
-	case v1alpha1.SchemeGroupVersion.WithResource("clusterconfigs"):
-		return &genericInformer{resource: resource.GroupResource(), informer: f.Opscli().V1alpha1().ClusterConfigs().Informer()}, nil
 
 	}
 

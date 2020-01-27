@@ -26,23 +26,6 @@ import (
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// ClusterConfigList is a list of ClusterConfig resources
-type ClusterConfigList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata"`
-
-	Items []ClusterConfig `json:"items"`
-}
-
-func NewClusterConfig(namespace, name string, obj ClusterConfig) *ClusterConfig {
-	obj.APIVersion, obj.Kind = SchemeGroupVersion.WithKind("ClusterConfig").ToAPIVersionAndKind()
-	obj.Name = name
-	obj.Namespace = namespace
-	return &obj
-}
-
-// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
 // AKSClusterConfigList is a list of AKSClusterConfig resources
 type AKSClusterConfigList struct {
 	metav1.TypeMeta `json:",inline"`

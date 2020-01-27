@@ -29,7 +29,6 @@ import (
 
 var (
 	AKSClusterConfigResourceName = "aksclusterconfigs"
-	ClusterConfigResourceName    = "clusterconfigs"
 )
 
 // SchemeGroupVersion is group version used to register these objects
@@ -55,8 +54,6 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&AKSClusterConfig{},
 		&AKSClusterConfigList{},
-		&ClusterConfig{},
-		&ClusterConfigList{},
 	)
 	metav1.AddToGroupVersion(scheme, SchemeGroupVersion)
 	return nil

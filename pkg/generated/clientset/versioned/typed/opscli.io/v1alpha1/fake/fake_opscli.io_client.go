@@ -32,10 +32,6 @@ func (c *FakeOpscliV1alpha1) AKSClusterConfigs() v1alpha1.AKSClusterConfigInterf
 	return &FakeAKSClusterConfigs{c}
 }
 
-func (c *FakeOpscliV1alpha1) ClusterConfigs() v1alpha1.ClusterConfigInterface {
-	return &FakeClusterConfigs{c}
-}
-
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
 func (c *FakeOpscliV1alpha1) RESTClient() rest.Interface {
