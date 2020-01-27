@@ -22,6 +22,11 @@ RUN GOOS=${GOOS} GOARCH=${GOARCH} go build \
   -X 'github.com/181192/ops-cli/cmd.gitCommit=$(git rev-parse --short HEAD)'" \
   -o "ops-cli" .
 
+FROM build as test
+
+ENV CI true
+RUN go test ./...
+
 
 FROM alpine:3.10
 
