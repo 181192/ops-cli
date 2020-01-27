@@ -40,6 +40,7 @@ docker-run:
 	docker run --rm ops-cli:latest version
 
 docs:
+	rm -rf docs/*.md
 	go run docs/docs.go
 
 generate:
