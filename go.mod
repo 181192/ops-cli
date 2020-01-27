@@ -40,4 +40,5 @@ require (
 	k8s.io/apimachinery v0.17.0
 	k8s.io/client-go v0.17.0
 	k8s.io/kops v1.11.0
+	sigs.k8s.io/yaml v1.1.0
 )
