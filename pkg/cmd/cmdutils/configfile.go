@@ -2,11 +2,18 @@ package cmdutils
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
 
+	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
+	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
 	"github.com/181192/ops-cli/pkg/ops"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
+	"sigs.k8s.io/yaml"
 )
 
 // AddConfigFileFlag adds common --config-file flag
@@ -127,4 +134,34 @@ func NewMetadataLoader(cmd *Cmd) ClusterConfigLoader {
 	l.validateWithoutConfigFile = l.validateMetadataWithoutConfigFile
 
 	return l
+}
+
+// LoadConfigFromFile loads ClusterConfig from configFile
+func LoadConfigFromFile(configFile string) (*api.AKSClusterConfig, error) {
+	data, err := readConfig(configFile)
+	if err != nil {
+		return nil, errors.Wrapf(err, "reading config file %q", configFile)
+	}
+
+	if err := yaml.UnmarshalStrict(data, &api.AKSClusterConfig{}); err != nil {
+		return nil, errors.Wrapf(err, "loading config file %q", configFile)
+	}
+
+	obj, err := runtime.Decode(scheme.Codecs.UniversalDeserializer(), data)
+	if err != nil {
+		return nil, errors.Wrapf(err, "loading config file %q", configFile)
+	}
+
+	cfg, ok := obj.(*api.AKSClusterConfig)
+	if !ok {
+		return nil, fmt.Errorf("expected to decode object of type %T; got %T", &api.AKSClusterConfig{}, cfg)
+	}
+	return cfg, nil
+}
+
+func readConfig(configFile string) ([]byte, error) {
+	if configFile == "-" {
+		return ioutil.ReadAll(os.Stdin)
+	}
+	return ioutil.ReadFile(configFile)
 }

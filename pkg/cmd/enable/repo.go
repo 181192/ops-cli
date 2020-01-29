@@ -1,24 +1,17 @@
 package enable
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-
+	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
+	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/helm"
+
 	"github.com/kr/pretty"
-
-	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
-	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
-
 	"github.com/pkg/errors"
 	"github.com/rancher/wrangler/pkg/schemes"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-
-	"k8s.io/apimachinery/pkg/runtime"
-	"sigs.k8s.io/yaml"
 )
 
 func enableRepoCmd() *cobra.Command {
@@ -44,7 +37,11 @@ func enableRepoCmd() *cobra.Command {
 
 			api.NewAKSClusterConfig("", "", api.AKSClusterConfig{})
 
-			clusterConfig, err := LoadConfigFromFile(clusterConfigFile)
+			// TODO Load from cli or file
+			// TODO Create clusterconfig file if not exists in temp repo
+			// TODO Add .opsignore file with clusterconfig file
+
+			clusterConfig, err := cmdutils.LoadConfigFromFile(clusterConfigFile)
 			if err != nil {
 				return err
 			}
@@ -107,34 +104,4 @@ func enableRepoCmd() *cobra.Command {
 	cmd = configureFluxOptions(cmd, &fluxOpts)
 
 	return cmd
-}
-
-// LoadConfigFromFile loads ClusterConfig from configFile
-func LoadConfigFromFile(configFile string) (*api.AKSClusterConfig, error) {
-	data, err := readConfig(configFile)
-	if err != nil {
-		return nil, errors.Wrapf(err, "reading config file %q", configFile)
-	}
-
-	if err := yaml.UnmarshalStrict(data, &api.AKSClusterConfig{}); err != nil {
-		return nil, errors.Wrapf(err, "loading config file %q", configFile)
-	}
-
-	obj, err := runtime.Decode(scheme.Codecs.UniversalDeserializer(), data)
-	if err != nil {
-		return nil, errors.Wrapf(err, "loading config file %q", configFile)
-	}
-
-	cfg, ok := obj.(*api.AKSClusterConfig)
-	if !ok {
-		return nil, fmt.Errorf("expected to decode object of type %T; got %T", &api.AKSClusterConfig{}, cfg)
-	}
-	return cfg, nil
-}
-
-func readConfig(configFile string) ([]byte, error) {
-	if configFile == "-" {
-		return ioutil.ReadAll(os.Stdin)
-	}
-	return ioutil.ReadFile(configFile)
 }
