@@ -36,5 +36,5 @@ Temporary Items
 build/
 vendor/
 examples/
+temp/
 .envrc
-.grenrc.yaml
