@@ -10,12 +10,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kris-nova/logger"
-	"github.com/pkg/errors"
-	"github.com/spf13/afero"
-
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
+
+	"github.com/pkg/errors"
+	logger "github.com/sirupsen/logrus"
+	"github.com/spf13/afero"
 )
 
 const (
@@ -38,7 +38,7 @@ type Profile struct {
 // Generate clones the specified Git repo in a base directory and generates overlays if the Git repo
 // points to a profile repo
 func (p *Profile) Generate(ctx context.Context) error {
-	logger.Info("cloning repository %q:%s", p.GitOpts.URL, p.GitOpts.Branch)
+	logger.Infof("cloning repository %q:%s", p.GitOpts.URL, p.GitOpts.Branch)
 	options := git.CloneOptions{
 		URL:    p.GitOpts.URL,
 		Branch: p.GitOpts.Branch,
@@ -65,7 +65,7 @@ func (p *Profile) Generate(ctx context.Context) error {
 	}
 
 	if len(outputFiles) > 0 {
-		logger.Info("writing new manifests to %q", p.Path)
+		logger.Infof("writing new manifests to %q", p.Path)
 	} else {
 		logger.Info("no template files found, nothing to write")
 		return nil
@@ -85,9 +85,9 @@ func (p *Profile) DeleteClonedDirectory() {
 		logger.Debug("no cloned directory to delete")
 		return
 	}
-	logger.Debug("deleting cloned directory %q", p.clonedDir)
+	logger.Debugf("deleting cloned directory %q", p.clonedDir)
 	if err := p.IO.RemoveAll(p.clonedDir); err != nil {
-		logger.Warning("unable to delete cloned directory %q", p.clonedDir)
+		logger.Warningf("unable to delete cloned directory %q", p.clonedDir)
 	}
 }
 
@@ -101,7 +101,7 @@ func (p *Profile) loadFiles(directory string) ([]fileprocessor.File, error) {
 			return nil
 		}
 
-		logger.Debug("found file %q", path)
+		logger.Debugf("found file %q", path)
 		fileContents, err := p.IO.ReadFile(path)
 		if err != nil {
 			return errors.Wrapf(err, "cannot read file %q", path)
@@ -121,7 +121,7 @@ func (p *Profile) loadFiles(directory string) ([]fileprocessor.File, error) {
 func (p *Profile) ignoreFiles(baseDir string) error {
 	ignoreFilePath := path.Join(baseDir, ignoreFilename)
 	if exists, _ := p.IO.Exists(ignoreFilePath); exists {
-		logger.Info("ignoring files declared in %s", ignoreFilename)
+		logger.Infof("ignoring files declared in %s", ignoreFilename)
 		file, err := p.IO.Open(ignoreFilePath)
 		if err != nil {
 			return err
@@ -138,7 +138,7 @@ func (p *Profile) ignoreFiles(baseDir string) error {
 			if err != nil {
 				return err
 			}
-			logger.Info("ignored %q", pathToIgnore)
+			logger.Infof("ignored %q", pathToIgnore)
 		}
 
 		// Remove the ignore file after finish
@@ -177,7 +177,7 @@ func (p *Profile) writeFiles(manifests []fileprocessor.File, outputPath string) 
 			return errors.Wrapf(err, "error creating output manifests dir: %q", outputPath)
 		}
 
-		logger.Debug("writing file %q", filePath)
+		logger.Debugf("writing file %q", filePath)
 		err := p.IO.WriteFile(filePath, manifest.Data, 0644)
 		if err != nil {
 			return errors.Wrapf(err, "error writing manifest: %q", filePath)
