@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/181192/ops-cli/pkg/cmd/completion"
@@ -12,14 +13,16 @@ import (
 	"github.com/181192/ops-cli/pkg/cmd/generate"
 	"github.com/181192/ops-cli/pkg/cmd/list"
 
-	"github.com/spf13/cobra"
-
 	homedir "github.com/mitchellh/go-homedir"
+	logger "github.com/sirupsen/logrus"
+
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
 var cfgFolder = getHome() + "/.ops"
+var loglevel string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -56,6 +59,14 @@ func init() {
 	}
 	rootCmd.AddCommand(completion.Command(rootCmd))
 
+	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		if err := setUpLogs(os.Stdout, loglevel); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	rootCmd.PersistentFlags().StringVar(&loglevel, "log-level", logger.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic)")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
 	rootCmd.PersistentFlags().MarkHidden("config")
 }
@@ -90,4 +101,17 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		// fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func setUpLogs(out io.Writer, level string) error {
+	logger.SetOutput(out)
+	logger.SetFormatter(&logger.TextFormatter{
+		FullTimestamp: true,
+	})
+	lvl, err := logger.ParseLevel(level)
+	if err != nil {
+		return err
+	}
+	logger.SetLevel(lvl)
+	return nil
 }
