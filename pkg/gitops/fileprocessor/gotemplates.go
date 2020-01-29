@@ -6,8 +6,9 @@ import (
 	"text/template"
 
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
-	"github.com/kris-nova/logger"
+
 	"github.com/pkg/errors"
+	logger "github.com/sirupsen/logrus"
 )
 
 const (
@@ -37,7 +38,7 @@ type GoTemplateProcessor struct {
 // ProcessFile takes a template file and executes the template applying the TemplateParameters
 func (p *GoTemplateProcessor) ProcessFile(file File) (File, error) {
 	if !isGoTemplate(file.Path) {
-		logger.Debug("leaving non-template file unmodified %q", file.Path)
+		logger.Debugf("leaving non-template file unmodified %q", file.Path)
 		return file, nil
 	}
 
