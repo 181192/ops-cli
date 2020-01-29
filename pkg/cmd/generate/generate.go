@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var clusterConfigFile string
+
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -19,5 +21,8 @@ var generateCmd = &cobra.Command{
 // Command will create the `generate` commands
 func Command() *cobra.Command {
 
+	generateCmd.AddCommand(generateProfileCmd())
+
+	generateCmd.PersistentFlags().StringVarP(&clusterConfigFile, "cluster-config-file", "f", "", "Load configuration from a file (or stdin if set to '-')")
 	return generateCmd
 }
