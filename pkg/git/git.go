@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kris-nova/logger"
 	"github.com/pkg/errors"
+	logger "github.com/sirupsen/logrus"
 	giturls "github.com/whilp/git-urls"
 
 	"github.com/181192/ops-cli/pkg/git/executor"
