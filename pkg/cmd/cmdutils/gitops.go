@@ -6,7 +6,6 @@ import (
 
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
-	"github.com/181192/ops-cli/pkg/ops"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -165,7 +164,7 @@ func (l *gitOpsConfigLoader) Load() error {
 	// The reference to ClusterConfig should only be reassigned if ClusterConfigFile is specified
 	// because other parts of the code store the pointer locally and access it directly instead of via
 	// the Cmd reference
-	if l.cmd.ClusterConfig, err = ops.LoadConfigFromFile(l.cmd.ClusterConfigFile); err != nil {
+	if l.cmd.ClusterConfig, err = LoadConfigFromFile(l.cmd.ClusterConfigFile); err != nil {
 		return err
 	}
 

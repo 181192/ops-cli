@@ -7,7 +7,6 @@ import (
 
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
 	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
-	"github.com/181192/ops-cli/pkg/ops"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
@@ -28,10 +27,10 @@ type ClusterConfigLoader interface {
 
 type commonClusterConfigLoader struct {
 	*Cmd
-
-	flagsIncompatibleWithConfigFile, flagsIncompatibleWithoutConfigFile sets.String
-
-	validateWithConfigFile, validateWithoutConfigFile func() error
+	flagsIncompatibleWithConfigFile    sets.String
+	flagsIncompatibleWithoutConfigFile sets.String
+	validateWithConfigFile             func() error
+	validateWithoutConfigFile          func() error
 }
 
 var (
@@ -42,12 +41,7 @@ var (
 		"cluster",
 		"namepace",
 	)
-	defaultFlagsIncompatibleWithoutConfigFile = sets.NewString(
-		"only",
-		"include",
-		"exclude",
-		"only-missing",
-	)
+	defaultFlagsIncompatibleWithoutConfigFile = sets.NewString()
 )
 
 func newCommonClusterConfigLoader(cmd *Cmd) *commonClusterConfigLoader {
@@ -80,7 +74,7 @@ func (l *commonClusterConfigLoader) Load() error {
 	// The reference to ClusterConfig should only be reassigned if ClusterConfigFile is specified
 	// because other parts of the code store the pointer locally and access it directly instead of via
 	// the Cmd reference
-	if l.ClusterConfig, err = ops.LoadConfigFromFile(l.ClusterConfigFile); err != nil {
+	if l.ClusterConfig, err = LoadConfigFromFile(l.ClusterConfigFile); err != nil {
 		return err
 	}
 	meta := l.ClusterConfig.ObjectMeta
