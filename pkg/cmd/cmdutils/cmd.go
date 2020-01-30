@@ -31,3 +31,15 @@ func (c *Cmd) NewCtl() error {
 
 	return nil
 }
+
+// AddResourceCmd create a registers a new command under the given verb command
+func AddResourceCmd(flagGrouping *FlagGrouping, parentVerbCmd *cobra.Command, newCmd func(*Cmd)) {
+	c := &Cmd{
+		CobraCommand: &cobra.Command{},
+		Validate:     true,
+	}
+	c.FlagSetGroup = flagGrouping.New(c.CobraCommand)
+	newCmd(c)
+	c.FlagSetGroup.AddTo(c.CobraCommand)
+	parentVerbCmd.AddCommand(c.CobraCommand)
+}
