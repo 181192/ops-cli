@@ -10,10 +10,12 @@ import (
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/181192/ops-cli/pkg/git"
+	"github.com/181192/ops-cli/pkg/git/gitconfig"
 	"github.com/181192/ops-cli/pkg/gitops"
 	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
 
+	"github.com/kr/pretty"
 	"github.com/pkg/errors"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
@@ -59,6 +61,20 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 	if cmd.NameArg != "" {
 		opts.profileOptions.Name = cmd.NameArg
 	}
+
+	if opts.gitOptions.User == "" {
+		if gitUser, err := gitconfig.Username(); err == nil {
+			opts.gitOptions.User = gitUser
+		}
+	}
+
+	if opts.gitOptions.Email == "" {
+		if gitEmail, err := gitconfig.Email(); err == nil {
+			opts.gitOptions.Email = gitEmail
+		}
+	}
+
+	logger.Debugf("%# v", pretty.Formatter(opts))
 
 	if err := opts.gitOptions.Validate(); err != nil {
 		return err
