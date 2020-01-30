@@ -18,15 +18,19 @@ const (
 // TemplateParameters represents the API variables that can be used to template a profile. This set of variables will
 // be applied to the go template files found. Templates filenames must end in .templ
 type TemplateParameters struct {
-	ClusterName string
-	Location    string
+	ClusterName               string
+	Location                  string
+	LoadBalancerIP            string
+	LoadBalancerResourceGroup string
 }
 
 // NewTemplateParameters creates a set of variables for templating given a ClusterConfig object
 func NewTemplateParameters(clusterConfig *api.AKSClusterConfig) TemplateParameters {
 	return TemplateParameters{
-		ClusterName: clusterConfig.ObjectMeta.Name,
-		Location:    clusterConfig.Spec.Location,
+		ClusterName:               clusterConfig.ObjectMeta.Name,
+		Location:                  clusterConfig.Spec.Location,
+		LoadBalancerIP:            clusterConfig.Spec.LoadBalancerIP,
+		LoadBalancerResourceGroup: clusterConfig.Spec.LoadBalancerResourceGroup,
 	}
 }
 
