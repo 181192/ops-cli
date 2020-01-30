@@ -38,7 +38,7 @@ type AKSClusterConfig struct {
 // AKSClusterConfigSpec is what identifies a cluster
 type AKSClusterConfigSpec struct {
 	Location                  string `json:"location"`
-	LoadBalancerIP            string `json:"loadBalancerIp"`
+	LoadBalancerIP            string `json:"loadBalancerIP"`
 	LoadBalancerResourceGroup string `json:"loadBalancerResourceGroup"`
 	// +optional
 	Version string `json:"version,omitempty"`
