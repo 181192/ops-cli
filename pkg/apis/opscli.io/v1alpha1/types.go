@@ -45,3 +45,15 @@ type AKSClusterConfigSpec struct {
 	// +optional
 	Tags map[string]string `json:"tags,omitempty"`
 }
+
+// DefaultAKSClusterConfig creates new config for cluster
+func DefaultAKSClusterConfig() *AKSClusterConfig {
+	return &AKSClusterConfig{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "AKSClusterConfig",
+			APIVersion: SchemeGroupVersion.String(),
+		},
+		ObjectMeta: metav1.ObjectMeta{},
+		Spec:       &AKSClusterConfigSpec{},
+	}
+}
