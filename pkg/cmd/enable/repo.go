@@ -5,14 +5,15 @@ import (
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
 	"github.com/181192/ops-cli/pkg/git"
+	"github.com/181192/ops-cli/pkg/git/gitconfig"
 	"github.com/181192/ops-cli/pkg/helm"
-	"github.com/pkg/errors"
-	"github.com/spf13/pflag"
 
 	"github.com/kr/pretty"
+	"github.com/pkg/errors"
 	"github.com/rancher/wrangler/pkg/schemes"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 func enableRepoCmd(cmd *cmdutils.Cmd) {
@@ -40,9 +41,21 @@ func enableRepoCmd(cmd *cmdutils.Cmd) {
 
 func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 	scheme.AddToScheme(schemes.All)
-	gitOpts := opts.GitOptions
+	gitOpts := &opts.GitOptions
 
-	if err := cmdutils.ValidateGitOptions(&gitOpts); err != nil {
+	if err := cmdutils.NewMetadataLoader(cmd).Load(); err != nil {
+		return err
+	}
+
+	if gitOpts.User == "" {
+		gitOpts.User = cmd.ClusterConfig.ObjectMeta.Name
+	}
+
+	if gitOpts.Email == "" {
+		gitOpts.Email = cmd.ClusterConfig.ObjectMeta.Name + "@weave.works"
+	}
+
+	if err := cmdutils.ValidateGitOptions(gitOpts); err != nil {
 		return err
 	}
 
@@ -99,7 +112,32 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 		logger.Fatalf("Failed to pull chart %s. %s", chartName, err)
 	}
 
-	// cleanCloneDir = true
+	// TODO Install flux & helm-operator with custom values into cluster
+
+	// Git add, commit and push flux manifests files in the user's repo
+	if err = gitClient.Add("."); err != nil {
+		return err
+	}
+
+	userGitUser, err := gitconfig.Username()
+	if err != nil {
+		return err
+	}
+
+	userGitEmail, err := gitconfig.Email()
+	if err != nil {
+		return err
+	}
+
+	if err = gitClient.Commit("Add flux manifests", userGitUser, userGitEmail); err != nil {
+		return err
+	}
+
+	if err = gitClient.Push(); err != nil {
+		return err
+	}
+
+	cleanCloneDir = true
 
 	return nil
 }
