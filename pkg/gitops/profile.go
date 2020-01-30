@@ -19,8 +19,7 @@ import (
 )
 
 const (
-	cloneDirPrefix = "opscli-"
-
+	cloneDirPrefix = "ops-cli-bootstrap-"
 	ignoreFilename = ".opsignore"
 )
 
