@@ -6,20 +6,19 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
-
-	"github.com/spf13/afero"
-
-	"github.com/181192/ops-cli/pkg/gitops"
-	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
 
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/181192/ops-cli/pkg/git"
+	"github.com/181192/ops-cli/pkg/gitops"
+	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
 
 	"github.com/pkg/errors"
 	logger "github.com/sirupsen/logrus"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 // ProfileOptions groups input for the "enable profile" command
@@ -28,59 +27,44 @@ type ProfileOptions struct {
 	profileOptions profile.Options
 }
 
-// Validate validates this ProfileOptions object
-func (opts ProfileOptions) Validate() error {
+func enableProfileCmd(cmd *cmdutils.Cmd) {
+	var opts ProfileOptions
+
+	cmd.ClusterConfig = api.DefaultAKSClusterConfig()
+	cmd.CobraCommand.Use = "profile"
+	cmd.CobraCommand.Short = "Enable and deploy the components from the selected profile"
+	cmd.CobraCommand.Long = ""
+	cmd.CobraCommand.RunE = func(_ *cobra.Command, args []string) error {
+		cmd.NameArg = cmdutils.GetNameArg(args)
+		return doEnableProfile(cmd, &opts)
+	}
+
+	cmd.FlagSetGroup.InFlagSet("Enable profile", func(fs *pflag.FlagSet) {
+		cmdutils.AddCommonFlagsForProfile(fs, &opts.profileOptions)
+		cmdutils.AddCommonFlagsForGit(fs, &opts.gitOptions)
+	})
+
+	cmd.FlagSetGroup.InFlagSet("General", func(fs *pflag.FlagSet) {
+		cmdutils.AddConfigFileFlag(fs, &cmd.ClusterConfigFile)
+		cmdutils.AddLocationFlag(fs, cmd.ClusterConfig)
+		cmdutils.AddClusterFlag(fs, cmd.ClusterConfig)
+	})
+}
+
+func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
+	if cmd.NameArg != "" && opts.profileOptions.Name != "" {
+		return cmdutils.ErrClusterFlagAndArg(cmd, cmd.NameArg, opts.profileOptions.Name)
+	}
+
+	if cmd.NameArg != "" {
+		opts.profileOptions.Name = cmd.NameArg
+	}
+
 	if err := opts.gitOptions.Validate(); err != nil {
 		return err
 	}
-	return opts.profileOptions.Validate()
-}
 
-// GetNameArg tests to ensure there is only 1 name argument
-func getNameArg(args []string) string {
-	if len(args) > 1 {
-		logger.Fatal("only one argument is allowed to be used as a name")
-		os.Exit(1)
-	}
-	if len(args) == 1 {
-		return (strings.TrimSpace(args[0]))
-	}
-	return ""
-}
-
-func enableProfileCmd() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "profile",
-		Short: "Set up Flux and deploy the components from the selected profile",
-		Long:  "",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			// client, err := kubernetes.NewClient(kubeconfig, configContext)
-			// if err != nil {
-			// 	return fmt.Errorf("failed to create k8s client: %v", err)
-			// }
-
-			// opts := configureProfileCmd(cmd)
-
-			profileName := getNameArg(args)
-
-			opts := &ProfileOptions{
-				profileOptions: profile.Options{
-					Name: profileName,
-				},
-				gitOptions: git.Options{
-					URL: profileName,
-				},
-			}
-
-			return doEnableProfile(cmd, opts)
-		},
-	}
-
-	return cmd
-}
-
-func doEnableProfile(cmd *cobra.Command, opts *ProfileOptions) error {
-	if err := opts.Validate(); err != nil {
+	if err := opts.profileOptions.Validate(); err != nil {
 		return err
 	}
 
@@ -89,10 +73,9 @@ func doEnableProfile(cmd *cobra.Command, opts *ProfileOptions) error {
 		return errors.Wrap(err, "please supply a valid profile name or URL")
 	}
 
-	// Load GitOpsConfig
-	// if err := NewGitOpsConfigLoader(cmd).Load(); err != nil {
-	// 	return err
-	// }
+	if err := cmdutils.NewGitOpsConfigLoader(cmd).Load(); err != nil {
+		return err
+	}
 
 	// Clone user's repo to apply profile
 	usersRepoName, err := git.RepoName(opts.gitOptions.URL)
@@ -120,12 +103,9 @@ func doEnableProfile(cmd *cobra.Command, opts *ProfileOptions) error {
 		return err
 	}
 
-	clusterConfig := api.NewAKSClusterConfig("", "", api.AKSClusterConfig{})
-	clusterConfig.Name = "test"
-
 	profile := &gitops.Profile{
 		Processor: &fileprocessor.GoTemplateProcessor{
-			Params: fileprocessor.NewTemplateParameters(clusterConfig),
+			Params: fileprocessor.NewTemplateParameters(cmd.ClusterConfig),
 		},
 		Path: profileOutputPath,
 		GitOpts: git.Options{
