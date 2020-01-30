@@ -50,10 +50,10 @@ func init() {
 	flagGrouping := cmdutils.NewGrouping()
 
 	rootCmd.AddCommand(dashboard.Command(flagGrouping))
+	rootCmd.AddCommand(generate.Command(flagGrouping))
 	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
 		rootCmd.AddCommand(enable.Command())
 		rootCmd.AddCommand(download.Command())
-		rootCmd.AddCommand(generate.Command(flagGrouping))
 	}
 	rootCmd.AddCommand(completion.Command(rootCmd))
 
