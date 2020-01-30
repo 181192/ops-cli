@@ -150,9 +150,9 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 		return err
 	}
 
-	// if err = gitClient.Push(); err != nil {
-	// 	return err
-	// }
+	if err = gitClient.Push(); err != nil {
+		return err
+	}
 
 	profile.DeleteClonedDirectory()
 	os.RemoveAll(usersRepoDir)
