@@ -187,7 +187,7 @@ func createTestFiles(testDir string, memFs afero.Fs) {
 	createFile(memFs, filepath.Join(testDir, ".git/some-git-file.yaml"), "this is a git file and should be ignored")
 	createFile(memFs, filepath.Join(testDir, ".git/some-git-file.yaml.tmpl"), "this is a git file and should be ignored")
 
-	createFile(memFs, filepath.Join(testDir, ".opscliignore"), "path/to/ignore")
+	createFile(memFs, filepath.Join(testDir, ".opsignore"), "path/to/ignore")
 	createFile(memFs, filepath.Join(testDir, "path/to/ignore"), "this file should be ignored")
 }
 

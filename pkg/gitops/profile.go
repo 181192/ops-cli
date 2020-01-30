@@ -21,7 +21,7 @@ import (
 const (
 	cloneDirPrefix = "opscli-"
 
-	ignoreFilename = ".opscliignore"
+	ignoreFilename = ".opsignore"
 )
 
 // Profile represents a gitops profile
