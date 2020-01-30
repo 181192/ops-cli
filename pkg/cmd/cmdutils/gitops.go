@@ -50,9 +50,9 @@ func AddCommonFlagsForFlux(fs *pflag.FlagSet, opts *InstallOpts) {
 		"Relative paths within the Git repo for Flux to locate Kubernetes manifests")
 	fs.StringVar(&opts.GitLabel, gitLabel, "flux",
 		"Git label to keep track of Flux's sync progress; this is equivalent to overriding --git-sync-tag and --git-notes-ref in Flux")
-	fs.StringVar(&opts.GitFluxPath, gitFluxPath, "flux/",
+	fs.StringVar(&opts.GitFluxPath, gitFluxPath, "flux-manifests/",
 		"Directory within the Git repository where to commit the Flux manifests")
-	fs.StringVar(&opts.Namespace, namespace, "flux",
+	fs.StringVar(&opts.Namespace, namespace, "flux-system",
 		"Cluster namespace where to install Flux, the Helm Operator and Tiller")
 	fs.BoolVar(&opts.WithHelm, withHelm, true,
 		"Install the Helm Operator and Tiller")
@@ -69,12 +69,11 @@ func AddCommonFlagsForGit(fs *pflag.FlagSet, opts *git.Options) {
 		"Git branch to be used for GitOps")
 	fs.StringVar(&opts.User, gitUser, "Flux",
 		"Username to use as Git committer")
-	fs.StringVar(&opts.Email, gitEmail, "",
+	fs.StringVar(&opts.Email, gitEmail, "flux@weave.works",
 		"Email to use as Git committer")
 	fs.StringVar(&opts.PrivateSSHKeyPath, gitPrivateSSHKeyPath, "",
 		"Optional path to the private SSH key to use with Git, e.g. ~/.ssh/id_rsa")
 	_ = cobra.MarkFlagRequired(fs, gitURL)
-	_ = cobra.MarkFlagRequired(fs, gitEmail)
 }
 
 // ValidateGitOptions validates the provided Git options.
