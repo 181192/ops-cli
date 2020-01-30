@@ -1,78 +1,41 @@
 package dashboard
 
 import (
-	"errors"
 	"fmt"
 	"io"
 
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/181192/ops-cli/pkg/kubernetes"
 	"github.com/181192/ops-cli/pkg/open"
 
 	"github.com/spf13/cobra"
-
-	v1 "k8s.io/api/core/v1"
 )
 
-var (
-	labelSelector = ""
-
-	kubeconfig    string
-	configContext string
-	namespace     string
-	label         string
-	port          int
-)
+// Options dashboard options
+type Options struct {
+	KubeOptions   cmdutils.KubernetesOpts
+	Label         string
+	Port          string
+	labelSelector string
+}
 
 // dashboardCmd represents the dashboard command
 var dashboardCmd = &cobra.Command{
 	Use:   "dashboard",
 	Short: "Access to various web UIs",
 	Long:  `Access to various web UIs`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if label == "" {
-			return errors.New("no labels given to filter")
-		}
-
-		client, err := kubernetes.NewClient(kubeconfig, configContext)
-		if err != nil {
-			return fmt.Errorf("failed to create k8s client: %v", err)
-		}
-
-		pl, err := client.PodsForSelector(namespace, label)
-		if err != nil {
-			return fmt.Errorf("not able to locate pod: %v", err)
-		}
-
-		if len(pl.Items) < 1 {
-			return errors.New("no pods found by " + label)
-		}
-
-		// only use the first pod in the list
-		return portForward(pl.Items[0].Name, namespace, "Pod",
-			"http://localhost:%d", port, client, cmd.OutOrStdout())
-	},
 }
 
 // Command will create the `dashboard` commands
-func Command() *cobra.Command {
-	dashboardCmd.AddCommand(kialiDashCmd())
-	dashboardCmd.AddCommand(promDashCmd())
-	dashboardCmd.AddCommand(grafanaDashCmd())
-	dashboardCmd.AddCommand(jaegerDashCmd())
-	dashboardCmd.AddCommand(alertmanagerDashCmd())
+func Command(flagGrouping *cmdutils.FlagGrouping) *cobra.Command {
 
-	dashboardCmd.PersistentFlags().StringVarP(&kubeconfig, "kubeconfig", "c", "", "Kubernetes configuration file")
-	dashboardCmd.PersistentFlags().StringVar(&configContext, "context", "", "The name of the kubeconfig context to use")
-	dashboardCmd.PersistentFlags().StringVarP(&namespace, "namespace", "n", v1.NamespaceAll, "Config namespace")
-
-	dashboardCmd.MarkFlagRequired("label")
-	dashboardCmd.Flags().StringVarP(&label, "label", "l", "", "key=value")
-
-	dashboardCmd.MarkFlagRequired("port")
-	dashboardCmd.Flags().IntVarP(&port, "port", "p", 0, "container port")
+	cmdutils.AddResourceCmd(flagGrouping, dashboardCmd, kialiDashboardCmd)
+	cmdutils.AddResourceCmd(flagGrouping, dashboardCmd, prometheusDashboardCmd)
+	cmdutils.AddResourceCmd(flagGrouping, dashboardCmd, grafanaDashboardCmd)
+	cmdutils.AddResourceCmd(flagGrouping, dashboardCmd, jaegerDashboardCmd)
+	cmdutils.AddResourceCmd(flagGrouping, dashboardCmd, alertmanagerDashboardCmd)
 
 	return dashboardCmd
-
 }
 
 // portForward first tries to forward localhost:remotePort to podName:remotePort, falls back to dynamic local port

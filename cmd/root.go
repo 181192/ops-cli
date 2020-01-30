@@ -49,7 +49,7 @@ func init() {
 	cobra.EnableCommandSorting = false
 	flagGrouping := cmdutils.NewGrouping()
 
-	rootCmd.AddCommand(dashboard.Command())
+	rootCmd.AddCommand(dashboard.Command(flagGrouping))
 	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
 		rootCmd.AddCommand(enable.Command())
 		rootCmd.AddCommand(download.Command())
