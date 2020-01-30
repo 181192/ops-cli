@@ -6,12 +6,10 @@ import (
 	"os"
 
 	"github.com/181192/ops-cli/pkg/cmd/completion"
-	"github.com/181192/ops-cli/pkg/cmd/create"
 	"github.com/181192/ops-cli/pkg/cmd/dashboard"
 	"github.com/181192/ops-cli/pkg/cmd/download"
 	"github.com/181192/ops-cli/pkg/cmd/enable"
 	"github.com/181192/ops-cli/pkg/cmd/generate"
-	"github.com/181192/ops-cli/pkg/cmd/list"
 
 	homedir "github.com/mitchellh/go-homedir"
 	logger "github.com/sirupsen/logrus"
@@ -53,9 +51,7 @@ func init() {
 	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
 		rootCmd.AddCommand(enable.Command())
 		rootCmd.AddCommand(download.Command())
-		rootCmd.AddCommand(create.Command())
 		rootCmd.AddCommand(generate.Command())
-		rootCmd.AddCommand(list.Command())
 	}
 	rootCmd.AddCommand(completion.Command(rootCmd))
 
