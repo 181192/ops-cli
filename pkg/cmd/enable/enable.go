@@ -1,8 +1,9 @@
 package enable
 
 import (
-	"os"
 	"time"
+
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 
 	"github.com/spf13/cobra"
 )
@@ -35,10 +36,6 @@ var enableCmd = &cobra.Command{
 	Use:   "enable",
 	Short: "Enable resource(s)",
 	Long:  `Enable resource(s).`,
-	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
-		os.Exit(0)
-	},
 }
 
 // GitOptions represent git options from cli
@@ -63,14 +60,11 @@ type FluxOptions struct {
 }
 
 // Command will create the `enable` commands
-func Command() *cobra.Command {
+func Command(flagGrouping *cmdutils.FlagGrouping) *cobra.Command {
+
+	cmdutils.AddResourceCmd(flagGrouping, enableCmd, enableRepoCmd)
 
 	enableCmd.AddCommand(enableProfileCmd())
-	enableCmd.AddCommand(enableRepoCmd())
-
-	enableCmd.PersistentFlags().StringVarP(&kubeconfig, "kubeconfig", "c", "", "Kubernetes configuration file")
-	enableCmd.PersistentFlags().StringVar(&configContext, "context", "", "The name of the kubeconfig context to use")
-	enableCmd.PersistentFlags().StringVarP(&clusterConfigFile, "cluster-config-file", "f", "", "Load configuration from a file (or stdin if set to '-')")
 	return enableCmd
 }
 
