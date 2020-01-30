@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/181192/ops-cli/pkg/cmd/completion"
 	"github.com/181192/ops-cli/pkg/cmd/dashboard"
 	"github.com/181192/ops-cli/pkg/cmd/download"
@@ -24,9 +25,10 @@ var loglevel string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ops",
-	Short: "ops-cli is a wrapper for devops tools",
-	Long:  `A wrapper for multiple devops tools...`,
+	Use:          "ops",
+	Short:        "ops-cli is a wrapper for devops tools",
+	Long:         `A wrapper for multiple devops tools...`,
+	SilenceUsage: true,
 }
 
 // NewRootCmd returns a new root cmd
@@ -45,13 +47,13 @@ func Execute() {
 
 func init() {
 	cobra.EnableCommandSorting = false
-	cobra.OnInitialize(initConfig)
+	flagGrouping := cmdutils.NewGrouping()
 
 	rootCmd.AddCommand(dashboard.Command())
 	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
 		rootCmd.AddCommand(enable.Command())
 		rootCmd.AddCommand(download.Command())
-		rootCmd.AddCommand(generate.Command())
+		rootCmd.AddCommand(generate.Command(flagGrouping))
 	}
 	rootCmd.AddCommand(completion.Command(rootCmd))
 
@@ -65,6 +67,10 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&loglevel, "log-level", logger.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic)")
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
 	rootCmd.PersistentFlags().MarkHidden("config")
+
+	cobra.OnInitialize(initConfig)
+	rootCmd.SetUsageFunc(flagGrouping.Usage)
+
 }
 
 func getHome() string {
