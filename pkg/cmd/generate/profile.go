@@ -2,8 +2,6 @@ package generate
 
 import (
 	"context"
-	"os"
-	"strings"
 
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
@@ -11,7 +9,6 @@ import (
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/gitops"
 	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
-	"github.com/181192/ops-cli/pkg/gitops/profile"
 
 	"github.com/kr/pretty"
 	"github.com/pkg/errors"
@@ -19,87 +16,61 @@ import (
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
-// ProfileOptions groups input for the "enable profile" command
+const (
+	gitURL               = "git-url"
+	gitBranch            = "git-branch"
+	profilePath          = "profile-path"
+	gitPrivateSSHKeyPath = "git-private-ssh-key-path"
+)
+
+// ProfileOptions options for generating profile
 type ProfileOptions struct {
-	gitOptions     git.Options
-	profileOptions profile.Options
-}
-
-// Validate validates this ProfileOptions object
-func (opts ProfileOptions) Validate() error {
-	if err := opts.gitOptions.Validate(); err != nil {
-		return err
-	}
-	return opts.profileOptions.Validate()
-}
-
-// GetNameArg tests to ensure there is only 1 name argument
-func getNameArg(args []string) string {
-	if len(args) > 1 {
-		logger.Fatal("only one argument is allowed to be used as a name")
-		os.Exit(1)
-	}
-	if len(args) == 1 {
-		return (strings.TrimSpace(args[0]))
-	}
-	return ""
-}
-
-// Options options for generating profile
-type Options struct {
 	GitOptions        git.Options
 	ProfilePath       string
 	PrivateSSHKeyPath string
 }
 
-const (
-	gitURL      = "git-url"
-	gitBranch   = "git-branch"
-	profilePath = "profile-path"
-)
+func generateProfileCmd(cmd *cmdutils.Cmd) {
+	var opts ProfileOptions
 
-func generateProfileCmd() *cobra.Command {
-
-	var opts Options
-
-	cmd := &cobra.Command{
-		Use:   "profile",
-		Short: "Generate a gitops profile",
-		Long:  "",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			scheme.AddToScheme(schemes.All)
-
-			// profileName := getNameArg(args)
-
-			return doGenerateProfile(cmd, opts)
-		},
+	cmd.ClusterConfig = api.DefaultAKSClusterConfig()
+	cmd.CobraCommand.Use = "profile"
+	cmd.CobraCommand.Short = "Generate a gitops profile"
+	cmd.CobraCommand.Long = ""
+	cmd.CobraCommand.RunE = func(_ *cobra.Command, args []string) error {
+		cmd.NameArg = cmdutils.GetNameArg(args)
+		return doGenerateProfile(cmd, opts)
 	}
 
-	cmd.Flags().StringVar(&opts.GitOptions.URL, gitURL, "", "URL for the base repository")
-	cmd.Flags().StringVar(&opts.GitOptions.Branch, gitBranch, "master", "Git branch")
-	cmd.Flags().StringVar(&opts.ProfilePath, profilePath, "./", "Path to generate the profile in")
-	cobra.MarkFlagRequired(cmd.Flags(), gitURL)
+	cmd.FlagSetGroup.InFlagSet("Generate Profile", func(fs *pflag.FlagSet) {
+		fs.StringVarP(&opts.GitOptions.URL, gitURL, "", "", "URL for the quickstart base repository")
+		fs.StringVarP(&opts.GitOptions.Branch, gitBranch, "", "master", "Git branch")
+		fs.StringVar(&opts.PrivateSSHKeyPath, gitPrivateSSHKeyPath, "", "Optional path to the private SSH key to use with Git, e.g. ~/.ssh/id_rsa")
+		fs.StringVarP(&opts.ProfilePath, profilePath, "", "./", "Path to generate the profile in")
+		_ = cobra.MarkFlagRequired(fs, gitURL)
+	})
 
-	return cmd
+	cmd.FlagSetGroup.InFlagSet("General", func(fs *pflag.FlagSet) {
+		cmdutils.AddConfigFileFlag(fs, &cmd.ClusterConfigFile)
+		cmdutils.AddLocationFlag(fs, cmd.ClusterConfig)
+		cmdutils.AddClusterFlag(fs, cmd.ClusterConfig)
+	})
 }
 
-func doGenerateProfile(cmd *cobra.Command, opts Options) error {
-	// if err := opts.Validate(); err != nil {
-	// 	return err
-	// }
-	api.NewAKSClusterConfig("", "", api.AKSClusterConfig{})
+func doGenerateProfile(cmd *cmdutils.Cmd, opts ProfileOptions) error {
+	scheme.AddToScheme(schemes.All)
 
-	clusterConfig, err := cmdutils.LoadConfigFromFile(clusterConfigFile)
-	if err != nil {
+	if err := cmdutils.NewMetadataLoader(cmd).Load(); err != nil {
 		return err
 	}
 
-	logger.Debugf("%# v", pretty.Formatter(clusterConfig))
+	logger.Debugf("%# v", pretty.Formatter(cmd.ClusterConfig))
 
 	processor := &fileprocessor.GoTemplateProcessor{
-		Params: fileprocessor.NewTemplateParameters(clusterConfig),
+		Params: fileprocessor.NewTemplateParameters(cmd.ClusterConfig),
 	}
 
 	profile := &gitops.Profile{
@@ -113,8 +84,7 @@ func doGenerateProfile(cmd *cobra.Command, opts Options) error {
 		IO: afero.Afero{Fs: afero.NewOsFs()},
 	}
 
-	err = profile.Generate(context.Background())
-	if err != nil {
+	if err := profile.Generate(context.Background()); err != nil {
 		return errors.Wrap(err, "error generating profile")
 	}
 
