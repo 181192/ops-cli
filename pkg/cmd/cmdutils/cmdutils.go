@@ -28,8 +28,8 @@ func GetNameArg(args []string) string {
 }
 
 // AddLocationFlag adds common --location flag
-func AddLocationFlag(fs *pflag.FlagSet, p *api.AKSClusterConfigSpec) {
-	fs.StringVarP(&p.Location, "location", "l", "", "Azure Location")
+func AddLocationFlag(fs *pflag.FlagSet, p *api.AKSClusterConfig) {
+	fs.StringVarP(&p.Spec.Location, "location", "l", "westeurope", "Cluster location")
 }
 
 // AddVersionFlag adds common --version flag
@@ -79,14 +79,15 @@ func ErrCannotUseWithConfigFile(what string) error {
 	return fmt.Errorf("cannot use %s when --config-file/-f is set", what)
 }
 
-// ErrUnsupportedManagedFlag reports unsupported flags for Managed Nodegroups
-func ErrUnsupportedManagedFlag(flag string) error {
-	return fmt.Errorf("%s is not supported for Managed Nodegroups (--managed=true)", flag)
-}
-
 // ErrUnsupportedNameArg reports unsupported usage of `name` argument
 func ErrUnsupportedNameArg() error {
 	return errors.New("name argument is not supported")
+}
+
+// AddClusterFlag adds a common --cluster flag for cluster name.
+// Use this for commands whose principal resource is *not* a cluster.
+func AddClusterFlag(fs *pflag.FlagSet, clusterConfig *api.AKSClusterConfig) {
+	fs.StringVarP(&clusterConfig.ObjectMeta.Name, "cluster", "c", "", "Cluster name")
 }
 
 // ClusterNameFlag returns the flag to use for the cluster name
