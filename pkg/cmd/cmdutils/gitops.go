@@ -67,9 +67,9 @@ func AddCommonFlagsForGit(fs *pflag.FlagSet, opts *git.Options) {
 		"SSH URL of the Git repository to be used for GitOps, e.g. git@github.com:<github_org>/<repo_name>")
 	fs.StringVar(&opts.Branch, gitBranch, "master",
 		"Git branch to be used for GitOps")
-	fs.StringVar(&opts.User, gitUser, "Flux",
+	fs.StringVar(&opts.User, gitUser, "",
 		"Username to use as Git committer")
-	fs.StringVar(&opts.Email, gitEmail, "flux@weave.works",
+	fs.StringVar(&opts.Email, gitEmail, "",
 		"Email to use as Git committer")
 	fs.StringVar(&opts.PrivateSSHKeyPath, gitPrivateSSHKeyPath, "",
 		"Optional path to the private SSH key to use with Git, e.g. ~/.ssh/id_rsa")
