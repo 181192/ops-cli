@@ -5,15 +5,15 @@ import (
 	"os"
 	"strings"
 
-	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
-
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/gitops"
 	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
 
+	"github.com/kr/pretty"
 	"github.com/pkg/errors"
 	"github.com/rancher/wrangler/pkg/schemes"
 	logger "github.com/sirupsen/logrus"
@@ -95,6 +95,8 @@ func doGenerateProfile(cmd *cobra.Command, opts Options) error {
 	if err != nil {
 		return err
 	}
+
+	logger.Debugf("%# v", pretty.Formatter(clusterConfig))
 
 	processor := &fileprocessor.GoTemplateProcessor{
 		Params: fileprocessor.NewTemplateParameters(clusterConfig),
