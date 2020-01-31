@@ -1,7 +1,7 @@
 package v1alpha1
 
-// ValidateAKSClusterConfig validates AKSClusterConfig
-func ValidateAKSClusterConfig(cfg *AKSClusterConfig) error {
+// ValidateClusterConfig validates ClusterConfig
+func ValidateClusterConfig(cfg *ClusterConfig) error {
 	// TODO
 	return nil
 }

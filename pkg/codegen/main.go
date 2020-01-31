@@ -17,7 +17,7 @@ func main() {
 		Groups: map[string]args.Group{
 			"opscli.io": {
 				Types: []interface{}{
-					v1alpha1.AKSClusterConfig{},
+					v1alpha1.ClusterConfig{},
 				},
 				GenerateTypes: true,
 			},

@@ -32,7 +32,7 @@ type ProfileOptions struct {
 func enableProfileCmd(cmd *cmdutils.Cmd) {
 	var opts ProfileOptions
 
-	cmd.ClusterConfig = api.DefaultAKSClusterConfig()
+	cmd.ClusterConfig = api.DefaultClusterConfig()
 	cmd.CobraCommand.Use = "profile"
 	cmd.CobraCommand.Short = "Enable and deploy the components from the selected profile"
 	cmd.CobraCommand.Long = ""

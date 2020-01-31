@@ -1,4 +1,4 @@
-kind: AKSClusterConfig
+kind: ClusterConfig
 apiVersion: opscli.io/v1alpha1
 metadata:
   name: some-aks-cluster

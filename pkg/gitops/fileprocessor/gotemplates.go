@@ -25,7 +25,7 @@ type TemplateParameters struct {
 }
 
 // NewTemplateParameters creates a set of variables for templating given a ClusterConfig object
-func NewTemplateParameters(clusterConfig *api.AKSClusterConfig) TemplateParameters {
+func NewTemplateParameters(clusterConfig *api.ClusterConfig) TemplateParameters {
 	return TemplateParameters{
 		ClusterName:               clusterConfig.ObjectMeta.Name,
 		Location:                  clusterConfig.Spec.Location,

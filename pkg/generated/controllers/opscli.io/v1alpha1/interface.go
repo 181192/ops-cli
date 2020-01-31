@@ -26,7 +26,7 @@ import (
 )
 
 type Interface interface {
-	AKSClusterConfig() AKSClusterConfigController
+	ClusterConfig() ClusterConfigController
 }
 
 func New(controllerManager *generic.ControllerManager, client clientset.OpscliV1alpha1Interface,
@@ -44,6 +44,6 @@ type version struct {
 	client            clientset.OpscliV1alpha1Interface
 }
 
-func (c *version) AKSClusterConfig() AKSClusterConfigController {
-	return NewAKSClusterConfigController(v1alpha1.SchemeGroupVersion.WithKind("AKSClusterConfig"), c.controllerManager, c.client, c.informers.AKSClusterConfigs())
+func (c *version) ClusterConfig() ClusterConfigController {
+	return NewClusterConfigController(v1alpha1.SchemeGroupVersion.WithKind("ClusterConfig"), c.controllerManager, c.client, c.informers.ClusterConfigs())
 }

@@ -28,8 +28,8 @@ type FakeOpscliV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeOpscliV1alpha1) AKSClusterConfigs() v1alpha1.AKSClusterConfigInterface {
-	return &FakeAKSClusterConfigs{c}
+func (c *FakeOpscliV1alpha1) ClusterConfigs() v1alpha1.ClusterConfigInterface {
+	return &FakeClusterConfigs{c}
 }
 
 // RESTClient returns a RESTClient that is used to communicate

@@ -26,7 +26,7 @@ import (
 
 type OpscliV1alpha1Interface interface {
 	RESTClient() rest.Interface
-	AKSClusterConfigsGetter
+	ClusterConfigsGetter
 }
 
 // OpscliV1alpha1Client is used to interact with features provided by the opscli.io group.
@@ -34,8 +34,8 @@ type OpscliV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *OpscliV1alpha1Client) AKSClusterConfigs() AKSClusterConfigInterface {
-	return newAKSClusterConfigs(c)
+func (c *OpscliV1alpha1Client) ClusterConfigs() ClusterConfigInterface {
+	return newClusterConfigs(c)
 }
 
 // NewForConfig creates a new OpscliV1alpha1Client for the given config.

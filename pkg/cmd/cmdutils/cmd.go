@@ -17,12 +17,12 @@ type Cmd struct {
 	NameArg           string
 	ClusterConfigFile string
 
-	ClusterConfig *api.AKSClusterConfig
+	ClusterConfig *api.ClusterConfig
 }
 
 // NewCtl validates
 func (c *Cmd) NewCtl() error {
-	if err := api.ValidateAKSClusterConfig(c.ClusterConfig); err != nil {
+	if err := api.ValidateClusterConfig(c.ClusterConfig); err != nil {
 		if c.Validate {
 			return err
 		}

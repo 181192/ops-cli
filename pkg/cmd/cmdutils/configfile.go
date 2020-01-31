@@ -131,13 +131,13 @@ func NewMetadataLoader(cmd *Cmd) ClusterConfigLoader {
 }
 
 // LoadConfigFromFile loads ClusterConfig from configFile
-func LoadConfigFromFile(configFile string) (*api.AKSClusterConfig, error) {
+func LoadConfigFromFile(configFile string) (*api.ClusterConfig, error) {
 	data, err := readConfig(configFile)
 	if err != nil {
 		return nil, errors.Wrapf(err, "reading config file %q", configFile)
 	}
 
-	if err := yaml.UnmarshalStrict(data, &api.AKSClusterConfig{}); err != nil {
+	if err := yaml.UnmarshalStrict(data, &api.ClusterConfig{}); err != nil {
 		return nil, errors.Wrapf(err, "loading config file %q", configFile)
 	}
 
@@ -146,9 +146,9 @@ func LoadConfigFromFile(configFile string) (*api.AKSClusterConfig, error) {
 		return nil, errors.Wrapf(err, "loading config file %q", configFile)
 	}
 
-	cfg, ok := obj.(*api.AKSClusterConfig)
+	cfg, ok := obj.(*api.ClusterConfig)
 	if !ok {
-		return nil, fmt.Errorf("expected to decode object of type %T; got %T", &api.AKSClusterConfig{}, cfg)
+		return nil, fmt.Errorf("expected to decode object of type %T; got %T", &api.ClusterConfig{}, cfg)
 	}
 	return cfg, nil
 }

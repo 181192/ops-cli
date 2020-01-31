@@ -28,15 +28,15 @@ const (
 // +genclient:nonNamespaced
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-// AKSClusterConfig represent a cluster
-type AKSClusterConfig struct {
+// ClusterConfig represent a cluster
+type ClusterConfig struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              *AKSClusterConfigSpec `json:"spec,omitempty"`
+	Spec              *ClusterConfigSpec `json:"spec,omitempty"`
 }
 
-// AKSClusterConfigSpec is what identifies a cluster
-type AKSClusterConfigSpec struct {
+// ClusterConfigSpec is what identifies a cluster
+type ClusterConfigSpec struct {
 	Location                  string `json:"location"`
 	LoadBalancerIP            string `json:"loadBalancerIP"`
 	LoadBalancerResourceGroup string `json:"loadBalancerResourceGroup"`
@@ -46,14 +46,14 @@ type AKSClusterConfigSpec struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-// DefaultAKSClusterConfig creates new config for cluster
-func DefaultAKSClusterConfig() *AKSClusterConfig {
-	return &AKSClusterConfig{
+// DefaultClusterConfig creates new config for cluster
+func DefaultClusterConfig() *ClusterConfig {
+	return &ClusterConfig{
 		TypeMeta: metav1.TypeMeta{
-			Kind:       "AKSClusterConfig",
+			Kind:       "ClusterConfig",
 			APIVersion: SchemeGroupVersion.String(),
 		},
 		ObjectMeta: metav1.ObjectMeta{},
-		Spec:       &AKSClusterConfigSpec{},
+		Spec:       &ClusterConfigSpec{},
 	}
 }

@@ -36,7 +36,7 @@ type ProfileOptions struct {
 func generateProfileCmd(cmd *cmdutils.Cmd) {
 	var opts ProfileOptions
 
-	cmd.ClusterConfig = api.DefaultAKSClusterConfig()
+	cmd.ClusterConfig = api.DefaultClusterConfig()
 	cmd.CobraCommand.Use = "profile"
 	cmd.CobraCommand.Short = "Generate a gitops profile"
 	cmd.CobraCommand.Long = ""

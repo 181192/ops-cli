@@ -4,7 +4,7 @@
 1. Create a `cluster-config.yaml`
 ```
 cat <<EOF > cluster-config.yaml
-kind: AKSClusterConfig
+kind: ClusterConfig
 apiVersion: opscli.io/v1alpha1
 metadata:
   name: some-aks-cluster

@@ -19,7 +19,7 @@ import (
 func enableRepoCmd(cmd *cmdutils.Cmd) {
 	var opts cmdutils.InstallOpts
 
-	cmd.ClusterConfig = api.DefaultAKSClusterConfig()
+	cmd.ClusterConfig = api.DefaultClusterConfig()
 	cmd.CobraCommand.Use = "repo"
 	cmd.CobraCommand.Short = "Set up a repo for gitops, installing Flux in the cluster and initializing its manifests"
 	cmd.CobraCommand.Long = ""

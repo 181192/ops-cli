@@ -28,12 +28,12 @@ func GetNameArg(args []string) string {
 }
 
 // AddLocationFlag adds common --location flag
-func AddLocationFlag(fs *pflag.FlagSet, p *api.AKSClusterConfig) {
+func AddLocationFlag(fs *pflag.FlagSet, p *api.ClusterConfig) {
 	fs.StringVarP(&p.Spec.Location, "location", "l", "westeurope", "Cluster location")
 }
 
 // AddVersionFlag adds common --version flag
-func AddVersionFlag(fs *pflag.FlagSet, meta *api.AKSClusterConfig, extraUsageInfo string) {
+func AddVersionFlag(fs *pflag.FlagSet, meta *api.ClusterConfig, extraUsageInfo string) {
 	usage := fmt.Sprintf("Kubernetes version (valid options: %s)", strings.Join(api.SupportedVersions(), ", "))
 	if extraUsageInfo != "" {
 		usage = fmt.Sprintf("%s [%s]", usage, extraUsageInfo)
@@ -86,7 +86,7 @@ func ErrUnsupportedNameArg() error {
 
 // AddClusterFlag adds a common --cluster flag for cluster name.
 // Use this for commands whose principal resource is *not* a cluster.
-func AddClusterFlag(fs *pflag.FlagSet, clusterConfig *api.AKSClusterConfig) {
+func AddClusterFlag(fs *pflag.FlagSet, clusterConfig *api.ClusterConfig) {
 	fs.StringVarP(&clusterConfig.ObjectMeta.Name, "cluster", "c", "", "Cluster name")
 }
 
