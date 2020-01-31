@@ -24,6 +24,11 @@ func Entire(key string) (string, error) {
 	return execGitConfig(key)
 }
 
+// Local extracts configuration value from current project repository.
+func Local(key string) (string, error) {
+	return execGitConfig("--local", key)
+}
+
 // Username extracts git user name from `Entire gitconfig`.
 // This is same as Entire("user.name")
 func Username() (string, error) {
@@ -34,6 +39,12 @@ func Username() (string, error) {
 // This is same as Global("user.email")
 func Email() (string, error) {
 	return Entire("user.email")
+}
+
+// OriginURL extract remote origin url from current project repository.
+// This is same as Local("remote.origin.url")
+func OriginURL() (string, error) {
+	return Local("remote.origin.url")
 }
 
 func execGitConfig(args ...string) (string, error) {
