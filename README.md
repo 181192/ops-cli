@@ -21,15 +21,15 @@ EOF
 3. Install and enable Flux & Helm-Operator in your cluster and save the manifests in the git repository
 ```
 ops enable repo \
-  --git-url git@github.com-private:181192/empty-sample.git \
+  --git-url git@github.com:181192/empty-sample.git \
   -f cluster-config.yaml
 ```
 
 4. Enable a GitOps profile and deploy to cluster
 ```
 ops enable profile \
-  --name git@bitbucket.org:staccas/kustomize-manifests.git \
-  --git-url git@github.com-private:181192/empty-sample.git \
+  --name git@bitbucket.org:181192/kustomize-manifests.git \
+  --git-url git@github.com:181192/empty-sample.git \
   -f cluster-config.yaml
 ```
 
