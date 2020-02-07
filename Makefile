@@ -8,7 +8,7 @@ deps:
 	go mod vendor
 
 test-build:
-	CGO_ENABLED=0 go build -mod=vendor -o build/ops -ldflags "-X 'github.com/181192/ops-cli/cmd.version=$$(git describe --tags --abbrev=0)' -X 'github.com/181192/ops-cli/cmd.gitCommit=$$(git rev-parse --short HEAD)'"
+	CGO_ENABLED=0 go build -o build/ops -ldflags "-X 'github.com/181192/ops-cli/cmd.version=$$(git describe --tags --abbrev=0)' -X 'github.com/181192/ops-cli/cmd.gitCommit=$$(git rev-parse --short HEAD)'"
 	sudo cp build/ops /usr/local/bin/ops
 
 build:
