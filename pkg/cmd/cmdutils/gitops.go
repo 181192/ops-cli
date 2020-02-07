@@ -7,7 +7,6 @@ import (
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
 	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/util/sets"
 )
@@ -26,6 +25,7 @@ const (
 	withHelm    = "with-helm"
 
 	profileName     = "name"
+	profileOverlay  = "overlay"
 	profileRevision = "revision"
 )
 
@@ -50,7 +50,7 @@ func AddCommonFlagsForFlux(fs *pflag.FlagSet, opts *InstallOpts) {
 		"Relative paths within the Git repo for Flux to locate Kubernetes manifests")
 	fs.StringVar(&opts.GitLabel, gitLabel, "flux",
 		"Git label to keep track of Flux's sync progress; this is equivalent to overriding --git-sync-tag and --git-notes-ref in Flux")
-	fs.StringVar(&opts.GitFluxPath, gitFluxPath, "flux-manifests/",
+	fs.StringVar(&opts.GitFluxPath, gitFluxPath, "manifests-flux/",
 		"Directory within the Git repository where to commit the Flux manifests")
 	fs.StringVar(&opts.Namespace, namespace, "flux-system",
 		"Cluster namespace where to install Flux, the Helm Operator and Tiller")
@@ -73,7 +73,6 @@ func AddCommonFlagsForGit(fs *pflag.FlagSet, opts *git.Options) {
 		"Email to use as Git committer")
 	fs.StringVar(&opts.PrivateSSHKeyPath, gitPrivateSSHKeyPath, "",
 		"Optional path to the private SSH key to use with Git, e.g. ~/.ssh/id_rsa")
-	_ = cobra.MarkFlagRequired(fs, gitURL)
 }
 
 // ValidateGitOptions validates the provided Git options.
@@ -93,8 +92,9 @@ func ValidateGitOptions(opts *git.Options) error {
 // AddCommonFlagsForProfile configures the flags required to enable a Quick
 // Start profile.
 func AddCommonFlagsForProfile(fs *pflag.FlagSet, opts *profile.Options) {
-	fs.StringVarP(&opts.Name, profileName, "", "", "name or URL of the Quick Start profile. For example, app-dev.")
-	fs.StringVarP(&opts.Revision, profileRevision, "", "master", "revision of the Quick Start profile.")
+	fs.StringVarP(&opts.Name, profileName, "", "", "Name or URL of the Quick Start profile. For example, app-dev.")
+	fs.StringVarP(&opts.Overlay, profileOverlay, "", "nginx", "Name of the overlay profile. For example nginx,linkerd or istio.")
+	fs.StringVarP(&opts.Revision, profileRevision, "", "master", "Revision of the Quick Start profile.")
 }
 
 // gitOpsConfigLoader handles loading of ClusterConfigFile v.s. using CLI

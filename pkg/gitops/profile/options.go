@@ -7,6 +7,7 @@ import (
 // Options holds options to configure the source of a Quick Start profile.
 type Options struct {
 	Name     string
+	Overlay  string
 	Revision string
 }
 
