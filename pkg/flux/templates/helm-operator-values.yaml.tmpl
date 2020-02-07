@@ -1,0 +1,19 @@
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+updateChartDeps: true
+
+helm:
+  versions: {{ .HelmVersions }}
+
+prometheus:
+  enabled: true
+
+clusterRole:
+  create: true
+
+git:
+  ssh:
+    secretName: flux-git-deploy

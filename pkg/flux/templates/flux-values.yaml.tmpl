@@ -1,0 +1,43 @@
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+
+helmOperator:
+  create: false
+
+git:
+  url: {{ .GitURL }}
+  branch: {{ .GitBranch }}
+  path: {{ .GitPaths }}
+  readonly: {{ .GitReadOnly }}
+  user: {{ .GitUser }}
+  label: {{ .GitLabel }}
+  ciSkip: true
+
+{{- if .AcrRegistry }}
+registry:
+  excludeImage: aksrepos.azurecr.io/*,mcr.microsoft.com/* # If AKS
+  acr:
+    enabled: {{ .AcrRegistry }}
+{{- end }}
+
+memcached:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 628Mi
+    requests:
+      cpu: 50m
+      memory: 512Mi
+
+prometheus:
+  enabled: true
+
+manifestGeneration: {{ .ManifestGeneration }}
+
+syncGarbageCollection:
+  enabled: {{ .GarbageCollection }}
+
+clusterRole:
+  create: true
