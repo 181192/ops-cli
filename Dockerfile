@@ -11,6 +11,8 @@ WORKDIR /app
 
 COPY go.mod .
 COPY go.sum .
+COPY pkg/flux/go.mod pkg/flux/go.mod
+COPY pkg/flux/go.sum pkg/flux/go.sum
 
 RUN go mod download
 
@@ -25,6 +27,7 @@ RUN GOOS=${GOOS} GOARCH=${GOARCH} go build \
 FROM build as test
 
 ENV CI true
+
 RUN go test ./...
 
 
