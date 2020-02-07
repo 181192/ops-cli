@@ -117,7 +117,15 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 		logger.Fatalf("Failed to pull chart %s. %s", helmOperatorChartName, err)
 	}
 
-	manifests, err := flux.FillInTemplates(flux.TemplateParameters{})
+	templateParameters := &flux.TemplateParameters{
+		GitURL:    opts.GitOptions.URL,
+		GitBranch: opts.GitOptions.Branch,
+		GitUser:   opts.GitOptions.User,
+		GitEmail:  opts.GitOptions.Email,
+		GitLabel:  opts.GitLabel,
+		GitPaths:  opts.GitPaths,
+	}
+	manifests, err := flux.FillInTemplates(templateParameters)
 	if err != nil {
 		logger.Fatal("Something went wrong")
 	}
