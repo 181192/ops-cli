@@ -13,9 +13,13 @@ import (
 	"github.com/pkg/errors"
 	logger "github.com/sirupsen/logrus"
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart"
+	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v3/pkg/cli/values"
 	"helm.sh/helm/v3/pkg/getter"
 	"helm.sh/helm/v3/pkg/repo"
+	"helm.sh/helm/v3/pkg/storage/driver"
 	"sigs.k8s.io/yaml"
 )
 
@@ -163,4 +167,120 @@ func (opts *repoAddOptions) run() error {
 	logger.Infof("%q has been added to your repositories\n", opts.name)
 
 	return nil
+}
+
+// UpgradeInstallChart upgrades a existing release or creates it
+func UpgradeInstallChart(releaseName string, chartPath string, valueOpts *values.Options) error {
+	logger.Debug("New upgrade-install client")
+	actionConfig := new(action.Configuration)
+	actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), debug)
+
+	client := action.NewUpgrade(actionConfig)
+
+	p := getter.All(settings)
+	vals, err := valueOpts.MergeValues(p)
+	if err != nil {
+		return err
+	}
+
+	chartPath, err = client.ChartPathOptions.LocateChart(chartPath, settings)
+	if err != nil {
+		return err
+	}
+
+	// If a release does not exist, install it. If another error occurs during
+	// the check, ignore the error and continue with the upgrade.
+	histClient := action.NewHistory(actionConfig)
+	histClient.Max = 1
+	if _, err := histClient.Run(releaseName); err == driver.ErrReleaseNotFound {
+		logger.Infof("Release %q does not exist. Installing it now.\n", releaseName)
+		instClient := action.NewInstall(actionConfig)
+		instClient.ReleaseName = releaseName
+		instClient.ChartPathOptions = client.ChartPathOptions
+		instClient.DryRun = client.DryRun
+		instClient.DisableHooks = client.DisableHooks
+		instClient.Timeout = client.Timeout
+		instClient.Wait = client.Wait
+		instClient.Devel = client.Devel
+		instClient.Namespace = client.Namespace
+		instClient.Atomic = client.Atomic
+
+		err := runInstall(instClient, releaseName, chartPath, valueOpts)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Check chart dependencies to make sure all are present in /charts
+	ch, err := loader.Load(chartPath)
+	if err != nil {
+		return err
+	}
+	if req := ch.Metadata.Dependencies; req != nil {
+		if err := action.CheckDependencies(ch, req); err != nil {
+			return err
+		}
+	}
+
+	if ch.Metadata.Deprecated {
+		logger.Warning("WARNING: This chart is deprecated")
+	}
+
+	logger.Infof("Installing %s in %s", releaseName, client.Namespace)
+	_, err = client.Run(releaseName, ch, vals)
+	if err != nil {
+		return errors.Wrap(err, "UPGRADE FAILED")
+	}
+
+	return nil
+}
+
+// runInstall installs a helm chart in current context
+func runInstall(client *action.Install, releaseName string, chartPath string, valueOpts *values.Options) error {
+	logger.Debug("New install client")
+
+	cp, err := client.ChartPathOptions.LocateChart(chartPath, settings)
+	if err != nil {
+		return err
+	}
+
+	p := getter.All(settings)
+	vals, err := valueOpts.MergeValues(p)
+	if err != nil {
+		return err
+	}
+
+	// Check chart dependencies to make sure all are present in /charts
+	chartRequested, err := loader.Load(cp)
+	if err != nil {
+		return err
+	}
+
+	validInstallableChart, err := isChartInstallable(chartRequested)
+	if !validInstallableChart {
+		return err
+	}
+
+	if chartRequested.Metadata.Deprecated {
+		logger.Warning("This chart is deprecated")
+	}
+
+	client.Namespace = settings.Namespace()
+	_, err = client.Run(chartRequested, vals)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// isChartInstallable validates if a chart can be installed
+//
+// Application chart type is only installable
+func isChartInstallable(ch *chart.Chart) (bool, error) {
+	switch ch.Metadata.Type {
+	case "", "application":
+		return true, nil
+	}
+	return false, errors.Errorf("%s charts are not installable", ch.Metadata.Type)
 }
