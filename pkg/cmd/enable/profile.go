@@ -2,10 +2,7 @@ package enable
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
@@ -14,6 +11,7 @@ import (
 	"github.com/181192/ops-cli/pkg/gitops"
 	"github.com/181192/ops-cli/pkg/gitops/fileprocessor"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
+	"github.com/181192/ops-cli/pkg/util/file"
 
 	"github.com/kr/pretty"
 	"github.com/pkg/errors"
@@ -50,6 +48,8 @@ func enableProfileCmd(cmd *cmdutils.Cmd) {
 		cmdutils.AddConfigFileFlag(fs, &cmd.ClusterConfigFile)
 		cmdutils.AddLocationFlag(fs, cmd.ClusterConfig)
 		cmdutils.AddClusterFlag(fs, cmd.ClusterConfig)
+		cmdutils.AddLoadBalancerIPFlag(fs, cmd.ClusterConfig)
+		cmdutils.AddLoadBalancerResourceGroupFlag(fs, cmd.ClusterConfig)
 	})
 }
 
@@ -74,6 +74,12 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 		}
 	}
 
+	if opts.gitOptions.URL == "" {
+		if gitURL, err := gitconfig.OriginURL(); err == nil {
+			opts.gitOptions.URL = gitURL
+		}
+	}
+
 	logger.Debugf("%# v", pretty.Formatter(opts))
 
 	if err := opts.gitOptions.Validate(); err != nil {
@@ -93,31 +99,33 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 		return err
 	}
 
-	// Clone user's repo to apply profile
-	usersRepoName, err := git.RepoName(opts.gitOptions.URL)
-	if err != nil {
-		return err
-	}
+	logger.Debugf("%# v", pretty.Formatter(cmd))
 
-	usersRepoDir, err := ioutil.TempDir("", usersRepoName+"-")
+	// // Clone user's repo to apply profile
+	// usersRepoName, err := git.RepoName(opts.gitOptions.URL)
+	// if err != nil {
+	// 	return err
+	// }
+
+	usersRepoDir := "./"
 	logger.Debugf("Directory %s will be used to clone the configuration repository and install the profile", usersRepoDir)
-	profileOutputPath := filepath.Join(usersRepoDir, "base")
+	profileOutputPath := "./"
 
-	gitClient := git.NewGitClient(git.ClientParams{
-		PrivateSSHKeyPath: opts.gitOptions.PrivateSSHKeyPath,
-	})
+	// gitClient := git.NewGitClient(git.ClientParams{
+	// 	PrivateSSHKeyPath: opts.gitOptions.PrivateSSHKeyPath,
+	// })
 
-	err = gitClient.CloneRepoInPath(
-		usersRepoDir,
-		git.CloneOptions{
-			URL:       opts.gitOptions.URL,
-			Branch:    opts.gitOptions.Branch,
-			Bootstrap: true,
-		},
-	)
-	if err != nil {
-		return err
-	}
+	// err = gitClient.CloneRepoInPath(
+	// 	usersRepoDir,
+	// 	git.CloneOptions{
+	// 		URL:       opts.gitOptions.URL,
+	// 		Branch:    opts.gitOptions.Branch,
+	// 		Bootstrap: true,
+	// 	},
+	// )
+	// if err != nil {
+	// 	return err
+	// }
 
 	profile := &gitops.Profile{
 		Processor: &fileprocessor.GoTemplateProcessor{
@@ -140,22 +148,37 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 		return errors.Wrap(err, "error generating profile")
 	}
 
+	err = os.MkdirAll(cmd.ClusterConfig.Name+"/plattform", 0755)
+	if err != nil {
+		return errors.Wrap(err, "error creating folder")
+	}
+
+	err = file.CopyDirectory("profiles/"+opts.profileOptions.Overlay, cmd.ClusterConfig.Name+"/plattform")
+	if err != nil {
+		return errors.Wrapf(err, "error moving profiles to %s", cmd.ClusterConfig.Name)
+	}
+
+	err = os.RemoveAll("profiles")
+	if err != nil {
+		return errors.Wrap(err, "error deleting profiles folder")
+	}
+
 	// Git add, commit and push component files in the user's repo
-	if err = gitClient.Add("."); err != nil {
-		return err
-	}
+	// if err = gitClient.Add("."); err != nil {
+	// 	return err
+	// }
 
-	commitMsg := fmt.Sprintf("Add %s profile components", opts.profileOptions.Name)
-	if err = gitClient.Commit(commitMsg, opts.gitOptions.User, opts.gitOptions.Email); err != nil {
-		return err
-	}
+	// commitMsg := fmt.Sprintf("Add %s profile components", opts.profileOptions.Name)
+	// if err = gitClient.Commit(commitMsg, opts.gitOptions.User, opts.gitOptions.Email); err != nil {
+	// 	return err
+	// }
 
-	if err = gitClient.Push(); err != nil {
-		return err
-	}
+	// if err = gitClient.Push(); err != nil {
+	// 	return err
+	// }
 
 	profile.DeleteClonedDirectory()
-	os.RemoveAll(usersRepoDir)
+	// os.RemoveAll(usersRepoDir)
 
 	return nil
 }
