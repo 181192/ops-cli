@@ -3,6 +3,7 @@ module github.com/181192/ops-cli
 go 1.13
 
 require (
+	github.com/181192/ops-cli/pkg/flux v0.0.0-00010101000000-000000000000
 	github.com/cheggaaa/pb v1.0.27
 	github.com/gofrs/flock v0.7.1
 	github.com/hashicorp/go-getter v1.4.1
@@ -30,3 +31,5 @@ require (
 replace github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503-38ab9da00309
 
 replace k8s.io/kubectl => k8s.io/kubectl v0.17.1
+
+replace github.com/181192/ops-cli/pkg/flux => ./pkg/flux
