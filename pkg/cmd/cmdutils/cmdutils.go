@@ -90,6 +90,16 @@ func AddClusterFlag(fs *pflag.FlagSet, clusterConfig *api.ClusterConfig) {
 	fs.StringVarP(&clusterConfig.ObjectMeta.Name, "cluster", "c", "", "Cluster name")
 }
 
+// AddLoadBalancerIPFlag adds a common --load-balancer-ip flag for load balancer ip.
+func AddLoadBalancerIPFlag(fs *pflag.FlagSet, clusterConfig *api.ClusterConfig) {
+	fs.StringVarP(&clusterConfig.Spec.LoadBalancerIP, "load-balacer-ip", "", "", "Loadbalancer IP")
+}
+
+// AddLoadBalancerResourceGroupFlag adds a common --load-balancer-ip-rg flag for load balancer ip resource group.
+func AddLoadBalancerResourceGroupFlag(fs *pflag.FlagSet, clusterConfig *api.ClusterConfig) {
+	fs.StringVarP(&clusterConfig.Spec.LoadBalancerResourceGroup, "load-balacer-ip-rg", "", "", "Loadbalancer IP resource group")
+}
+
 // ClusterNameFlag returns the flag to use for the cluster name
 // taking the principal resource into account.
 func ClusterNameFlag(cmd *Cmd) string {
