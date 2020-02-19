@@ -138,12 +138,12 @@ func LoadConfigFromFile(configFile string) (*api.ClusterConfig, error) {
 	}
 
 	if err := yaml.UnmarshalStrict(data, &api.ClusterConfig{}); err != nil {
-		return nil, errors.Wrapf(err, "loading config file %q", configFile)
+		return nil, errors.Wrapf(err, "converting YAML to JSON when loading config file %q", configFile)
 	}
 
 	obj, err := runtime.Decode(scheme.Codecs.UniversalDeserializer(), data)
 	if err != nil {
-		return nil, errors.Wrapf(err, "loading config file %q", configFile)
+		return nil, errors.Wrapf(err, "decoding data into objects when loading config file %q", configFile)
 	}
 
 	cfg, ok := obj.(*api.ClusterConfig)
