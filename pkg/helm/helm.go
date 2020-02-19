@@ -57,7 +57,10 @@ func PullChart(chartName string, chartVersion string) error {
 
 	client := action.NewPull()
 	client.Settings = settings
-	client.Version = chartVersion
+
+	if chartVersion != "" {
+		client.Version = chartVersion
+	}
 
 	logger.Debugf("Pulling %s:%s...", chartName, chartVersion)
 	res, err := client.Run(chartName)
@@ -77,16 +80,19 @@ func PullChartUntarToDir(chartName string, chartVersion string, dirName string) 
 
 	client := action.NewPull()
 	client.Settings = settings
-	client.Version = chartVersion
-	client.Untar = true
 	client.UntarDir = dirName
+	client.Untar = true
 
-	logger.Debugf("Pulling %s:%s...", chartName, chartVersion)
+	if chartVersion != "" {
+		client.Version = chartVersion
+	}
+
+	logger.Debugf("Pulling %s...", chartName)
 	res, err := client.Run(chartName)
 	if err != nil {
 		return err
 	}
-	logger.Infof("Pulled %s:%s %s", chartName, chartVersion, res)
+	logger.Infof("Pulled %s %s", chartName, res)
 
 	return nil
 }
@@ -170,12 +176,13 @@ func (opts *repoAddOptions) run() error {
 }
 
 // UpgradeInstallChart upgrades a existing release or creates it
-func UpgradeInstallChart(releaseName string, chartPath string, valueOpts *values.Options) error {
+func UpgradeInstallChart(releaseName string, chartPath string, valueOpts *values.Options, namespace string) error {
 	logger.Debug("New upgrade-install client")
 	actionConfig := new(action.Configuration)
 	actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), debug)
 
 	client := action.NewUpgrade(actionConfig)
+	client.Namespace = namespace
 
 	p := getter.All(settings)
 	vals, err := valueOpts.MergeValues(p)
@@ -209,6 +216,8 @@ func UpgradeInstallChart(releaseName string, chartPath string, valueOpts *values
 		if err != nil {
 			return err
 		}
+
+		return nil
 	}
 
 	// Check chart dependencies to make sure all are present in /charts
