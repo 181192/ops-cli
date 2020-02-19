@@ -235,7 +235,7 @@ func UpgradeInstallChart(releaseName string, chartPath string, valueOpts *values
 		logger.Warning("WARNING: This chart is deprecated")
 	}
 
-	logger.Infof("Installing %s in %s", releaseName, client.Namespace)
+	logger.Infof("Upgrading %s in %s", releaseName, client.Namespace)
 	_, err = client.Run(releaseName, ch, vals)
 	if err != nil {
 		return errors.Wrap(err, "UPGRADE FAILED")
