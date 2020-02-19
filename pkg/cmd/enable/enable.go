@@ -1,6 +1,7 @@
 package enable
 
 import (
+	"os"
 	"time"
 
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
@@ -40,7 +41,10 @@ var enableCmd = &cobra.Command{
 func Command(flagGrouping *cmdutils.FlagGrouping) *cobra.Command {
 
 	cmdutils.AddResourceCmd(flagGrouping, enableCmd, enableRepoCmd)
-	cmdutils.AddResourceCmd(flagGrouping, enableCmd, enableProfileCmd)
+
+	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
+		cmdutils.AddResourceCmd(flagGrouping, enableCmd, enableProfileCmd)
+	}
 
 	return enableCmd
 }
