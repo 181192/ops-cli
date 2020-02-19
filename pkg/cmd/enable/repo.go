@@ -10,6 +10,7 @@ import (
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/181192/ops-cli/pkg/flux"
 	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
+	"github.com/181192/ops-cli/pkg/git/gitconfig"
 	"github.com/181192/ops-cli/pkg/helm"
 	"github.com/181192/ops-cli/pkg/util/file"
 	"helm.sh/helm/v3/pkg/cli/values"
@@ -60,6 +61,14 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 	}
 
 	clusterName := cmd.ClusterConfig.ObjectMeta.Name
+
+	if gitOpts.URL == "" {
+		url, err := gitconfig.OriginURL()
+		if err != nil {
+			return err
+		}
+		gitOpts.URL = url
+	}
 
 	if gitOpts.User == "" {
 		gitOpts.User = clusterName
