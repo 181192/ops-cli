@@ -9,7 +9,9 @@ helmOperator:
 git:
   url: {{ .GitURL }}
   branch: {{ .GitBranch }}
-  path: {{ .GitPaths }}
+  {{- if .GitPaths }}
+  path: {{ StringsJoin .GitPaths "," }}
+  {{- end }}
   readonly: {{ .GitReadOnly }}
   user: {{ .GitUser }}
   label: {{ .GitLabel }}
@@ -17,7 +19,7 @@ git:
 
 {{- if .AcrRegistry }}
 registry:
-  excludeImage: aksrepos.azurecr.io/*,mcr.microsoft.com/* # If AKS
+  excludeImage: aksrepos.azurecr.io/*,mcr.microsoft.com/*
   acr:
     enabled: {{ .AcrRegistry }}
 {{- end }}
