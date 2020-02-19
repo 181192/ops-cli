@@ -6,7 +6,7 @@ resources:
 updateChartDeps: true
 
 helm:
-  versions: {{ .HelmVersions }}
+  versions: {{ StringsJoin .HelmVersions "," }}
 
 prometheus:
   enabled: true
