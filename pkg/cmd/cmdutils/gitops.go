@@ -2,7 +2,6 @@ package cmdutils
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/181192/ops-cli/pkg/git"
 	"github.com/181192/ops-cli/pkg/gitops/profile"
@@ -18,11 +17,19 @@ const (
 	gitEmail             = "git-email"
 	gitPrivateSSHKeyPath = "git-private-ssh-key-path"
 
-	gitPaths    = "git-paths"
-	gitFluxPath = "git-flux-subdir"
-	gitLabel    = "git-label"
-	namespace   = "namespace"
-	withHelm    = "with-helm"
+	gitPaths                 = "git-paths"
+	gitFluxPath              = "git-flux-subdir"
+	gitLabel                 = "git-label"
+	namespace                = "namespace"
+	withHelm                 = "with-helm"
+	helmVersions             = "helm-versions"
+	manifestGeneration       = "manifest-generation"
+	garbageCollection        = "garbage-collection"
+	acrRegistry              = "acr-registry"
+	overrideValues           = "override-values"
+	fluxChartVersion         = "flux-chart-version"
+	helmOperatorChartVersion = "helm-operator-chart-version"
+	skipInstall              = "skip-install"
 
 	profileName     = "name"
 	profileOverlay  = "overlay"
@@ -31,14 +38,20 @@ const (
 
 // InstallOpts are the installation options for Flux
 type InstallOpts struct {
-	GitOptions  git.Options
-	GitPaths    []string
-	GitLabel    string
-	GitFluxPath string
-	Namespace   string
-	Timeout     time.Duration
-	Amend       bool
-	WithHelm    bool
+	GitOptions               git.Options
+	GitPaths                 []string
+	GitLabel                 string
+	GitFluxPath              string
+	Namespace                string
+	WithHelm                 bool
+	HelmVersions             []string
+	ManifestGeneration       bool
+	GarbageCollection        bool
+	AcrRegistry              bool
+	OverrideValues           bool
+	FluxChartVersion         string
+	HelmOperatorChartVersion string
+	SkipInstall              bool
 }
 
 // AddCommonFlagsForFlux configures the flags required to install Flux on a
@@ -48,16 +61,30 @@ func AddCommonFlagsForFlux(fs *pflag.FlagSet, opts *InstallOpts) {
 
 	fs.StringSliceVar(&opts.GitPaths, gitPaths, []string{},
 		"Relative paths within the Git repo for Flux to locate Kubernetes manifests")
-	fs.StringVar(&opts.GitLabel, gitLabel, "flux",
+	fs.StringVar(&opts.GitLabel, gitLabel, "",
 		"Git label to keep track of Flux's sync progress; this is equivalent to overriding --git-sync-tag and --git-notes-ref in Flux")
 	fs.StringVar(&opts.GitFluxPath, gitFluxPath, "manifests-flux/",
 		"Directory within the Git repository where to commit the Flux manifests")
 	fs.StringVar(&opts.Namespace, namespace, "flux-system",
-		"Cluster namespace where to install Flux, the Helm Operator and Tiller")
+		"Cluster namespace where to install Flux and the Helm Operator")
+	fs.StringSliceVar(&opts.HelmVersions, helmVersions, []string{"v3"},
+		"Versions of Helm to enable")
 	fs.BoolVar(&opts.WithHelm, withHelm, true,
-		"Install the Helm Operator and Tiller")
-	fs.BoolVar(&opts.Amend, "amend", false,
-		"Stop to manually tweak the Flux manifests before pushing them to the Git repository")
+		"Install the Helm Operator")
+	fs.BoolVar(&opts.ManifestGeneration, manifestGeneration, true,
+		"Enable manifest generation")
+	fs.BoolVar(&opts.GarbageCollection, garbageCollection, true,
+		"Enable garbage collection")
+	fs.BoolVar(&opts.AcrRegistry, acrRegistry, true,
+		"Enable ACR authentication (requires deployment in AKS)")
+	fs.BoolVar(&opts.OverrideValues, overrideValues, false,
+		"Override values files")
+	fs.StringVar(&opts.FluxChartVersion, fluxChartVersion, "",
+		"Chart version of Flux (default latest)")
+	fs.StringVar(&opts.HelmOperatorChartVersion, helmOperatorChartVersion, "",
+		"Chart version of Helm Operator (default latest)")
+	fs.BoolVar(&opts.SkipInstall, skipInstall, false,
+		"Skip installing Flux to cluster")
 }
 
 // AddCommonFlagsForGit configures the flags required to interact with a Git
