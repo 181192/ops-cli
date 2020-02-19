@@ -11,13 +11,21 @@ import (
 	"github.com/181192/ops-cli/pkg/flux"
 	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
 	"github.com/181192/ops-cli/pkg/helm"
+	"github.com/181192/ops-cli/pkg/util/file"
+	"helm.sh/helm/v3/pkg/cli/values"
 
 	"github.com/kr/pretty"
 	"github.com/rancher/wrangler/pkg/schemes"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"helm.sh/helm/v3/pkg/cli/values"
+)
+
+const (
+	repoName              = "fluxcd"
+	repoURL               = "https://charts.fluxcd.io"
+	fluxChartName         = repoName + "/flux"
+	helmOperatorChartName = repoName + "/helm-operator"
 )
 
 func enableRepoCmd(cmd *cmdutils.Cmd) {
@@ -51,12 +59,18 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 		return err
 	}
 
+	clusterName := cmd.ClusterConfig.ObjectMeta.Name
+
 	if gitOpts.User == "" {
-		gitOpts.User = cmd.ClusterConfig.ObjectMeta.Name
+		gitOpts.User = clusterName
 	}
 
 	if gitOpts.Email == "" {
-		gitOpts.Email = cmd.ClusterConfig.ObjectMeta.Name + "@weave.works"
+		gitOpts.Email = clusterName + "@weave.works"
+	}
+
+	if opts.GitLabel == "" {
+		opts.GitLabel = clusterName + "-sync"
 	}
 
 	if err := cmdutils.ValidateGitOptions(gitOpts); err != nil {
@@ -99,35 +113,33 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 
 	fluxManifestsDir := cloneDir + "/" + opts.GitFluxPath
 
-	repoName := "fluxcd"
-	repoURL := "https://charts.fluxcd.io"
 	if err := helm.AddRepository(repoName, repoURL); err != nil {
 		logger.Fatalf("Failed to add registry %s %s. %s", repoName, repoURL, err)
 	}
 
-	fluxChartName := repoName + "/flux"
-	fluxChartVersion := "1.1.0"
-	if err := helm.PullChartUntarToDir(fluxChartName, fluxChartVersion, fluxManifestsDir); err != nil {
+	if err := helm.PullChartUntarToDir(fluxChartName, opts.FluxChartVersion, fluxManifestsDir); err != nil {
 		logger.Fatalf("Failed to pull chart %s. %s", fluxChartName, err)
 	}
 
-	helmOperatorChartName := repoName + "/helm-operator"
-	helmOperatorChartVersion := "0.6.0"
-	if err := helm.PullChartUntarToDir(helmOperatorChartName, helmOperatorChartVersion, fluxManifestsDir); err != nil {
+	if err := helm.PullChartUntarToDir(helmOperatorChartName, opts.HelmOperatorChartVersion, fluxManifestsDir); err != nil {
 		logger.Fatalf("Failed to pull chart %s. %s", helmOperatorChartName, err)
 	}
 
 	templateParameters := &flux.TemplateParameters{
-		GitURL:    opts.GitOptions.URL,
-		GitBranch: opts.GitOptions.Branch,
-		GitUser:   opts.GitOptions.User,
-		GitEmail:  opts.GitOptions.Email,
-		GitLabel:  opts.GitLabel,
-		GitPaths:  opts.GitPaths,
+		GitURL:             opts.GitOptions.URL,
+		GitBranch:          opts.GitOptions.Branch,
+		GitUser:            opts.GitOptions.User,
+		GitEmail:           opts.GitOptions.Email,
+		GitLabel:           opts.GitLabel,
+		GitPaths:           opts.GitPaths,
+		AcrRegistry:        opts.AcrRegistry,
+		GarbageCollection:  opts.GarbageCollection,
+		ManifestGeneration: opts.ManifestGeneration,
+		HelmVersions:       opts.HelmVersions,
 	}
 	manifests, err := flux.FillInTemplates(templateParameters)
 	if err != nil {
-		logger.Fatal("Something went wrong")
+		logger.Fatalf("Failed to template install values %s", err)
 	}
 
 	writeManifest := func(fileName string, content []byte) error {
@@ -144,28 +156,42 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 		return fmt.Errorf("%s is not a directory", fluxManifestsDir)
 	}
 
-	writeManifest = func(fileName string, content []byte) error {
-		path := filepath.Join(fluxManifestsDir, fileName)
-		fmt.Fprintf(os.Stderr, "writing %s\n", path)
+	writeManifest = func(path string, content []byte) error {
+		logger.Infof("Writing %s", path)
 		return ioutil.WriteFile(path, content, os.FileMode(0666))
+	}
+
+	for fileName, content := range manifests {
+		fileName = clusterName + "-" + fileName
+		path := filepath.Join(fluxManifestsDir, fileName)
+		if !file.Exists(path) || opts.OverrideValues {
+			if err := writeManifest(path, content); err != nil {
+				return fmt.Errorf("cannot output manifest file %s: %s", path, err)
+			}
+		} else {
+			logger.Warnf("%s exists, skip creating...", path)
+		}
+	}
+
+	if opts.SkipInstall {
+		logger.Warning("Skip installing Flux to cluster...")
+		return nil
 	}
 
 	valueOpts := &values.Options{}
 
-	for fileName, content := range manifests {
-		if err := writeManifest(fileName, content); err != nil {
-			return fmt.Errorf("cannot output manifest file %s: %s", fileName, err)
-		}
+	fluxValues := clusterName + "-flux-values.yaml"
+	fluxChartPath := fluxManifestsDir + "/flux"
+	valueOpts.ValueFiles = []string{filepath.Join(fluxManifestsDir, fluxValues)}
+	if err := helm.UpgradeInstallChart("flux", fluxChartPath, valueOpts, opts.Namespace); err != nil {
+		logger.Fatalf("Failed to install chart %s. %s", fluxChartName, err)
 	}
 
-	valueOpts.ValueFiles = []string{filepath.Join(fluxManifestsDir, "flux-values.yaml")}
-	if err := helm.UpgradeInstallChart("flux", fluxManifestsDir+"/flux", valueOpts); err != nil {
-		logger.Fatalf("Failed to pull chart %s. %s", fluxChartName, err)
-	}
-
-	valueOpts.ValueFiles = []string{filepath.Join(fluxManifestsDir, "helm-operator-values.yaml")}
-	if err := helm.UpgradeInstallChart("helm-operator", fluxManifestsDir+"/helm-operator", valueOpts); err != nil {
-		logger.Fatalf("Failed to pull chart %s. %s", fluxChartName, err)
+	helmOperatorValues := clusterName + "-helm-operator-values.yaml"
+	helmOperatorChartPath := fluxManifestsDir + "/helm-operator"
+	valueOpts.ValueFiles = []string{filepath.Join(fluxManifestsDir, helmOperatorValues)}
+	if err := helm.UpgradeInstallChart("helm-operator", helmOperatorChartPath, valueOpts, opts.Namespace); err != nil {
+		logger.Fatalf("Failed to install chart %s. %s", helmOperatorChartName, err)
 	}
 
 	// Git add, commit and push flux manifests files in the user's repo
