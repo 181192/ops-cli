@@ -26,7 +26,7 @@ type TemplateParameters struct {
 	ManifestGeneration bool
 	GarbageCollection  bool
 	AcrRegistry        bool
-	HelmVersions       string
+	HelmVersions       []string
 }
 
 // FillInTemplates fils in custom helm values for flux and helm-operator
