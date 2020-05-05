@@ -42,7 +42,7 @@ func doPortForwardGrafana(cmd *cmdutils.Cmd, opts Options) error {
 		namespace = "monitoring"
 	}
 
-	pl, err := client.PodsForSelector(namespace, "app=grafana")
+	pl, err := client.PodsForSelector(namespace, "app.kubernetes.io/name=grafana")
 	if err != nil {
 		return fmt.Errorf("not able to locate Grafana pod: %v", err)
 	}
