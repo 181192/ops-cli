@@ -72,13 +72,13 @@ func (release *opsCliRelease) Update() error {
 	logger.Debugf("Attemting to fetch latest tag from %s", latestURL)
 	resp, err := client.Get(latestURL)
 	if err != nil {
-		logger.Warnf("Failed to get latest stable version of helm %s %s", err, resp.Status)
+		logger.Warnf("Failed to get latest stable version of ops-cli %s %s", err, resp.Status)
 	}
 	defer resp.Body.Close()
 
 	location, err := resp.Location()
 	if err != nil {
-		logger.Warnf("Failed to get latest stable version of helm %s %s", err, resp.Status)
+		logger.Warnf("Failed to get latest stable version of ops-cli %s %s", err, resp.Status)
 	}
 
 	latestTag := stringutils.After(location.Path, "tag/")
