@@ -2,16 +2,18 @@ package download
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/181192/ops-cli/pkg/download"
-	cmdUtil "github.com/181192/ops-cli/pkg/util"
+	"github.com/181192/ops-cli/pkg/util"
+	"github.com/181192/ops-cli/pkg/util/stringutils"
 	"github.com/hashicorp/go-getter"
-
+	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-var helmBinary = cfgFolder + "/bin/helm"
+var helmBinary = util.GetConfigDirectory() + "/bin/helm"
 
 type helmRelease struct {
 	*download.Release
@@ -46,11 +48,10 @@ var helmCmd = &cobra.Command{
 	Short: "A kubernetes package manager",
 	Long:  `A kubernetes package manager.`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return cmdUtil.RequireFile(helmBinary)
+		return util.RequireFile(helmBinary)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO Set chache, configuration and data paths
-		cmdUtil.ExecuteCmd(cmd, helmBinary, args)
+		util.ExecuteCmd(cmd, helmBinary, args)
 	},
 }
 
@@ -60,7 +61,27 @@ var helmCmd = &cobra.Command{
 
 func (release *helmRelease) setDownloadURL() *helmRelease {
 	if release.Version == "latest" {
-		release.Version = "v3.0.1"
+		release.Version = "v3.2.1"
+
+		client := &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			}}
+
+		resp, err := client.Get("https://github.com/helm/helm/releases/latest")
+		if err != nil {
+			logger.Warnf("Failed to get latest stable version of helm %s %s", err, resp.Status)
+		}
+		defer resp.Body.Close()
+
+		location, err := resp.Location()
+		if err != nil {
+			logger.Warnf("Failed to get latest stable version of helm %s %s", err, resp.Status)
+		}
+
+		if location.Path != "" {
+			release.Version = stringutils.After(location.Path, "tag/")
+		}
 	}
 	release.URL = "https://get.helm.sh/helm-" + release.Version + "-" + release.ArtifactName
 	return release
@@ -70,15 +91,17 @@ func (release *helmRelease) DownloadIfNotExists() error {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(download.DefaultProgressBar)
 
-		fmt.Printf("Attempting to download %s, version %s, to %q\n", release.Name, release.Version, release.LocalFileName)
-		tmpDir := cfgFolder + "/bin/.tmp"
+		logger.Infof("Attempting to download %s, version %s, to %q\n", release.Name, release.Version, release.LocalFileName)
+		tmpDir := util.GetConfigDirectory() + "/bin/.tmp"
 
 		err := getter.GetAny(tmpDir, release.URL, progress)
 		if err != nil {
 			return fmt.Errorf("%s\nFailed to to download external binaries", err)
 		}
 
-		err = os.Rename(tmpDir+"/linux-amd64/helm", release.LocalFileName)
+		helmDirName := tmpDir + "/" + stringutils.Before(release.ArtifactName, ".") + "/helm"
+		logger.Debug("Trying to move %s to %s", helmDirName, release.LocalFileName)
+		err = os.Rename(helmDirName, release.LocalFileName)
 		if err != nil {
 			return fmt.Errorf("%s\nFailed to move binaries", err)
 		}
@@ -93,7 +116,7 @@ func (release *helmRelease) DownloadIfNotExists() error {
 			return fmt.Errorf("%s\nFailed delete tmp dir", err)
 		}
 	} else {
-		fmt.Printf("%s already exists at %s\n", release.Name, release.LocalFileName)
+		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
 	return nil
 }
