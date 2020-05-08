@@ -11,8 +11,8 @@ import (
 	"github.com/181192/ops-cli/pkg/cmd/download"
 	"github.com/181192/ops-cli/pkg/cmd/enable"
 	"github.com/181192/ops-cli/pkg/cmd/generate"
+	"github.com/181192/ops-cli/pkg/util"
 
-	homedir "github.com/mitchellh/go-homedir"
 	logger "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -20,7 +20,6 @@ import (
 )
 
 var cfgFile string
-var cfgFolder = getHome() + "/.ops"
 var loglevel string
 
 // rootCmd represents the base command when called without any subcommands
@@ -52,9 +51,7 @@ func init() {
 	rootCmd.AddCommand(dashboard.Command(flagGrouping))
 	rootCmd.AddCommand(generate.Command(flagGrouping))
 	rootCmd.AddCommand(enable.Command(flagGrouping))
-	if os.Getenv("OPSCLI_EXPERIMENTAL") == "true" {
-		rootCmd.AddCommand(download.Command())
-	}
+	rootCmd.AddCommand(download.Command())
 	rootCmd.AddCommand(completion.Command(rootCmd))
 
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
@@ -73,15 +70,6 @@ func init() {
 
 }
 
-func getHome() string {
-	home, err := homedir.Dir()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	return home
-}
-
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	if cfgFile != "" {
@@ -89,11 +77,13 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	} else {
 
-		if _, err := os.Stat(cfgFolder); os.IsNotExist(err) {
-			os.Mkdir(cfgFolder, os.ModeDir)
+		cfgDir := util.GetConfigDirectory()
+
+		if _, err := os.Stat(cfgDir); os.IsNotExist(err) {
+			os.Mkdir(util.GetConfigDirectory(), os.ModePerm)
 		}
 
-		viper.AddConfigPath(cfgFolder)
+		viper.AddConfigPath(cfgDir)
 		viper.SetConfigName("ops")
 	}
 

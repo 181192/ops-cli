@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -38,4 +39,14 @@ func checkFile(fileName string) error {
 		return err
 	}
 	return nil
+}
+
+// GetConfigDirectory returns the config directory for the executing user
+func GetConfigDirectory() string {
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	return home + "/.ops"
 }

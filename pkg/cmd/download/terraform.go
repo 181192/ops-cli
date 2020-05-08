@@ -5,12 +5,13 @@ import (
 	"os"
 
 	"github.com/181192/ops-cli/pkg/download"
-	cmdUtil "github.com/181192/ops-cli/pkg/util"
+	"github.com/181192/ops-cli/pkg/util"
 	"github.com/hashicorp/go-getter"
+	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-var terraformBinary = cfgFolder + "/bin/terraform"
+var terraformBinary = util.GetConfigDirectory() + "/bin/terraform"
 
 type terraformRelease struct {
 	*download.Release
@@ -48,10 +49,10 @@ var terraformCmd = &cobra.Command{
 	Short: "Terraform IaC tool",
 	Long:  `Terraform IaC tool.`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return cmdUtil.RequireFile(terraformBinary)
+		return util.RequireFile(terraformBinary)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		cmdUtil.ExecuteCmd(cmd, terraformBinary, args)
+		util.ExecuteCmd(cmd, terraformBinary, args)
 	},
 }
 
@@ -72,7 +73,7 @@ func (release *terraformRelease) DownloadIfNotExists() error {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(download.DefaultProgressBar)
 
-		fmt.Printf("Attempting to download %s, version %s, to %q\n", release.Name, release.Version, release.LocalFileName)
+		logger.Infof("Attempting to download %s, version %s, to %q\n", release.Name, release.Version, release.LocalFileName)
 
 		err := getter.GetFile(release.LocalFileName, release.URL, progress)
 		if err != nil {
@@ -84,7 +85,7 @@ func (release *terraformRelease) DownloadIfNotExists() error {
 			return fmt.Errorf("%s\nFailed chmod", err)
 		}
 	} else {
-		fmt.Printf("%s already exists at %s\n", release.Name, release.LocalFileName)
+		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
 	return nil
 }

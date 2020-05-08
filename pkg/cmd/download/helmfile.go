@@ -2,12 +2,13 @@ package download
 
 import (
 	"github.com/181192/ops-cli/pkg/download"
+	"github.com/181192/ops-cli/pkg/util"
 	cmdUtil "github.com/181192/ops-cli/pkg/util"
 
 	"github.com/spf13/cobra"
 )
 
-var helmfileBinary = cfgFolder + "/bin/helmfile"
+var helmfileBinary = util.GetConfigDirectory() + "/bin/helmfile"
 
 func newHelmfileRelease() *download.Release {
 
