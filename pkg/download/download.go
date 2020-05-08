@@ -67,7 +67,7 @@ func (release *Release) SetArtifactName(artifacts map[string]string) *Release {
 	platform := runtime.GOOS + "/" + runtime.GOARCH
 	artifact, found := artifacts[platform]
 	if !found {
-		logger.Info("Unsupported os/platform %s\n", platform)
+		logger.Infof("Unsupported os/platform %s\n", platform)
 	}
 
 	release.ArtifactName = artifact

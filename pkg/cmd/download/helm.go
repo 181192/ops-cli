@@ -100,7 +100,7 @@ func (release *helmRelease) DownloadIfNotExists() error {
 		}
 
 		helmDirName := tmpDir + "/" + stringutils.Before(release.ArtifactName, ".") + "/helm"
-		logger.Debug("Trying to move %s to %s", helmDirName, release.LocalFileName)
+		logger.Debugf("Trying to move %s to %s", helmDirName, release.LocalFileName)
 		err = os.Rename(helmDirName, release.LocalFileName)
 		if err != nil {
 			return fmt.Errorf("%s\nFailed to move binaries", err)
