@@ -50,3 +50,12 @@ func GetConfigDirectory() string {
 	}
 	return home + "/.ops"
 }
+
+// GetExecutable returns the path of the executable
+func GetExecutable() string {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	return ex
+}
