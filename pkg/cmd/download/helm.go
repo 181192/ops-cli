@@ -7,14 +7,12 @@ import (
 	"os"
 
 	"github.com/181192/ops-cli/pkg/download"
-	"github.com/181192/ops-cli/pkg/util"
 	"github.com/181192/ops-cli/pkg/util/stringutils"
+	"github.com/181192/ops-cli/pkg/wrapper"
 	"github.com/hashicorp/go-getter"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
-
-var helmBinary = util.GetConfigDirectory() + "/bin/helm"
 
 type helmRelease struct {
 	*download.Release
@@ -32,7 +30,7 @@ func newHelmRelease() *helmRelease {
 		&download.Release{
 			Account:       "helm",
 			Name:          "helm",
-			LocalFileName: helmBinary,
+			LocalFileName: wrapper.HelmBinary,
 		},
 	}
 
@@ -43,16 +41,13 @@ func newHelmRelease() *helmRelease {
 	return release
 }
 
-// helmfileCmd represents the helmfile command
+// helmCmd represents the helm command
 var helmCmd = &cobra.Command{
 	Use:   "helm",
-	Short: "A kubernetes package manager",
-	Long:  `A kubernetes package manager.`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.RequireFile(helmBinary)
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		util.ExecuteCmd(cmd, helmBinary, args)
+	Short: "Downloads helm",
+	Long:  `Downloads helm.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return newHelmRelease().DownloadIfNotExists()
 	},
 }
 

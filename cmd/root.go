@@ -12,6 +12,7 @@ import (
 	"github.com/181192/ops-cli/pkg/cmd/enable"
 	"github.com/181192/ops-cli/pkg/cmd/generate"
 	"github.com/181192/ops-cli/pkg/cmd/update"
+	"github.com/181192/ops-cli/pkg/cmd/wrapper"
 	"github.com/181192/ops-cli/pkg/util"
 
 	logger "github.com/sirupsen/logrus"
@@ -52,6 +53,7 @@ func init() {
 	rootCmd.AddCommand(dashboard.Command(flagGrouping))
 	rootCmd.AddCommand(generate.Command(flagGrouping))
 	rootCmd.AddCommand(enable.Command(flagGrouping))
+	rootCmd.AddCommand(wrapper.Command())
 	rootCmd.AddCommand(download.Command())
 	rootCmd.AddCommand(update.Command())
 	rootCmd.AddCommand(completion.Command(rootCmd))

@@ -2,13 +2,10 @@ package download
 
 import (
 	"github.com/181192/ops-cli/pkg/download"
-	"github.com/181192/ops-cli/pkg/util"
-	cmdUtil "github.com/181192/ops-cli/pkg/util"
+	"github.com/181192/ops-cli/pkg/wrapper"
 
 	"github.com/spf13/cobra"
 )
-
-var helmfileBinary = util.GetConfigDirectory() + "/bin/helmfile"
 
 func newHelmfileRelease() *download.Release {
 
@@ -21,7 +18,7 @@ func newHelmfileRelease() *download.Release {
 	release := &download.Release{
 		Account:       "roboll",
 		Name:          "helmfile",
-		LocalFileName: helmfileBinary,
+		LocalFileName: wrapper.HelmfileBinary,
 	}
 
 	release.SetVersion()
@@ -34,17 +31,9 @@ func newHelmfileRelease() *download.Release {
 // helmfileCmd represents the helmfile command
 var helmfileCmd = &cobra.Command{
 	Use:   "helmfile",
-	Short: "Deploy Kubernetes Helm Charts",
-	Long: `Helmfile is a declarative spec for deploying helm charts. It lets you...
-
-	- Keep a directory of chart value files and maintain changes in version control.
-	- Apply CI/CD to configuration changes.
-	- Periodically sync to avoid skew in environments.`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return cmdUtil.RequireFile(helmfileBinary)
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO add --helm-binary flag as default
-		cmdUtil.ExecuteCmd(cmd, helmfileBinary, args)
+	Short: "Downloads helmfile",
+	Long:  `Downloads helmfile`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return newHelmfileRelease().DownloadIfNotExists()
 	},
 }

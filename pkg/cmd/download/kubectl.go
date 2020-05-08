@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/181192/ops-cli/pkg/download"
-	"github.com/181192/ops-cli/pkg/util"
+	"github.com/181192/ops-cli/pkg/wrapper"
 	"github.com/hashicorp/go-getter"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -17,8 +17,6 @@ import (
 // https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl
 // https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/darwin/amd64/kubectl
 // https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/windows/amd64/kubectl.exe
-
-var kubectlBinary = util.GetConfigDirectory() + "/bin/kubectl"
 
 type kubectlRelease struct {
 	*download.Release
@@ -36,7 +34,7 @@ func newKubectlRelease() *kubectlRelease {
 		&download.Release{
 			Account:       "kubectl",
 			Name:          "kubectl",
-			LocalFileName: kubectlBinary,
+			LocalFileName: wrapper.KubectlBinary,
 		},
 	}
 
@@ -50,13 +48,10 @@ func newKubectlRelease() *kubectlRelease {
 // kubectlCmd represents the kubectl command
 var kubectlCmd = &cobra.Command{
 	Use:   "kubectl",
-	Short: "kubectl controls the Kubernetes cluster manager",
-	Long:  `kubectl controls the Kubernetes cluster manager.`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.RequireFile(kubectlBinary)
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		util.ExecuteCmd(cmd, kubectlBinary, args)
+	Short: "Downloads kubectl",
+	Long:  `Downloads kubectl.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return newKubectlRelease().DownloadIfNotExists()
 	},
 }
 

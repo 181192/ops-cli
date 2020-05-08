@@ -7,14 +7,12 @@ import (
 	"os"
 
 	"github.com/181192/ops-cli/pkg/download"
-	"github.com/181192/ops-cli/pkg/util"
+	"github.com/181192/ops-cli/pkg/wrapper"
 	"github.com/hashicorp/go-getter"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/tidwall/gjson"
 )
-
-var terraformBinary = util.GetConfigDirectory() + "/bin/terraform"
 
 type terraformRelease struct {
 	*download.Release
@@ -35,7 +33,7 @@ func newTerraformRelease() *terraformRelease {
 	release := &terraformRelease{
 		&download.Release{
 			Name:          "terraform",
-			LocalFileName: terraformBinary,
+			LocalFileName: wrapper.TerraformBinary,
 		},
 	}
 
@@ -49,13 +47,10 @@ func newTerraformRelease() *terraformRelease {
 // terraformCmd represents the terraform command
 var terraformCmd = &cobra.Command{
 	Use:   "terraform",
-	Short: "Terraform IaC tool",
-	Long:  `Terraform IaC tool.`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		return util.RequireFile(terraformBinary)
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		util.ExecuteCmd(cmd, terraformBinary, args)
+	Short: "Downloads terraform",
+	Long:  `Downloads terraform.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return newTerraformRelease().DownloadIfNotExists()
 	},
 }
 
