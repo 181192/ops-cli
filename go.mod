@@ -20,6 +20,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.6.2
 	github.com/stretchr/testify v1.4.0
+	github.com/tidwall/gjson v1.6.0
 	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
 	helm.sh/helm/v3 v3.0.2
 	k8s.io/api v0.17.1

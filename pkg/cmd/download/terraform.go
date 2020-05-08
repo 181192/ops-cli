@@ -2,6 +2,8 @@ package download
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 
 	"github.com/181192/ops-cli/pkg/download"
@@ -9,6 +11,7 @@ import (
 	"github.com/hashicorp/go-getter"
 	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/tidwall/gjson"
 )
 
 var terraformBinary = util.GetConfigDirectory() + "/bin/terraform"
@@ -56,14 +59,25 @@ var terraformCmd = &cobra.Command{
 	},
 }
 
-// https://releases.hashicorp.com/terraform/{{ version }}/terraform_{{ version }}_linux_amd64.zip
-// https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_linux_amd64.zip
-// https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_darwin_amd64.zip
-// https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_windows_amd64.zip
-
 func (release *terraformRelease) setDownloadURL() *terraformRelease {
 	if release.Version == "latest" {
-		release.Version = "0.12.17"
+		terraformVersion := "0.12.17"
+
+		resp, err := http.Get("https://checkpoint-api.hashicorp.com/v1/check/terraform")
+		if err != nil {
+			logger.Warnf("Failed to get latest stable version of terraform %s %s", err, resp.Status)
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+
+		if resp.StatusCode != http.StatusOK {
+			logger.Warnf("Failed to read latest version, default to %s", terraformVersion)
+			release.Version = terraformVersion
+		}
+
+		latestTag := gjson.Get(string(body), "current_version").String()
+		logger.Debugf("Latest relese version of terraform %s", latestTag)
+		release.Version = latestTag
 	}
 	release.URL = "https://releases.hashicorp.com/terraform/" + release.Version + "/terraform_" + release.Version + "_" + release.ArtifactName
 	return release
