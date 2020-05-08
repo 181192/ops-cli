@@ -21,9 +21,10 @@ type Options struct {
 
 // dashboardCmd represents the dashboard command
 var dashboardCmd = &cobra.Command{
-	Use:   "dashboard",
-	Short: "Access to various web UIs",
-	Long:  `Access to various web UIs`,
+	Use:     "dashboard",
+	Aliases: []string{"d"},
+	Short:   "Access to various web UIs",
+	Long:    `Access to various web UIs`,
 }
 
 // Command will create the `dashboard` commands
