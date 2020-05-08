@@ -20,8 +20,8 @@ COPY . .
 RUN GOOS=${GOOS} GOARCH=${GOARCH} go build \
   ${LDFLAGS} \
   -ldflags " \
-  -X 'github.com/181192/ops-cli/cmd.version=$(git describe --tags --abbrev=0)' \
-  -X 'github.com/181192/ops-cli/cmd.gitCommit=$(git rev-parse --short HEAD)'" \
+  -X 'github.com/181192/ops-cli/pkg/util/version.Version=$(git describe --tags --abbrev=0)' \
+  -X 'github.com/181192/ops-cli/pkg/util/version.GitCommit=$(git rev-parse --short HEAD)'" \
   -o "ops-cli" .
 
 FROM build as test
