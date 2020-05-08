@@ -21,5 +21,5 @@ type KubernetesOpts struct {
 func AddCommonFlagsForKubernetes(fs *pflag.FlagSet, opts *KubernetesOpts) {
 	fs.StringVar(&opts.KubeContext, kubeContext, "", "Name of the kubeconfig context to use")
 	fs.StringVar(&opts.KubeConfig, kubeConfig, "", "Absolute path of the kubeconfig file to be used")
-	fs.StringVar(&opts.Namespace, kubeNamespace, "", "Name of the namespace to use. Defaults to the application default namespace.")
+	fs.StringVarP(&opts.Namespace, kubeNamespace, "n", "", "Name of the namespace to use. Defaults to the application default namespace.")
 }
