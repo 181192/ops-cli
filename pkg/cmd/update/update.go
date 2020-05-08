@@ -2,6 +2,7 @@ package update
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -20,8 +21,8 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update ops-cli to latest version",
 	Long:  `Update ops-cli to latest version`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newOpsCliRelease().Update()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return newOpsCliRelease().Update()
 	},
 }
 
@@ -91,15 +92,32 @@ func (release *opsCliRelease) Update() error {
 		return nil
 	}
 
-	url := "https://github.com/" + release.Account + "/" + release.Name + "/releases/" + release.Version + "/download/" + release.ArtifactName
+	url := "https://github.com/" + release.Account + "/" + release.Name + "/releases/download/" + release.Version + "/" + release.ArtifactName
 
 	progress := getter.WithProgress(download.DefaultProgressBar)
 
-	logger.Infof("Attempting to download %s, version %s, to %q\n", release.Name, release.Version, release.LocalFileName)
-	err = getter.GetFile(release.LocalFileName, url, progress)
+	logger.Infof("Attempting to download %s, version %s, to %q from %s", release.Name, release.Version, release.LocalFileName, url)
+
+	tmpDir, err := ioutil.TempDir("", "ops-cli")
+	if err != nil {
+		return fmt.Errorf("%s\nFailed to create temp directory", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	err = getter.GetAny(tmpDir, url, progress)
 	if err != nil {
 		return fmt.Errorf("%s\nFailed to to download external binaries", err)
 	}
-	os.Chmod(release.LocalFileName, 0775)
+
+	err = os.Rename(tmpDir+"/"+release.ArtifactName, release.LocalFileName)
+	if err != nil {
+		return fmt.Errorf("%s\nFailed to move binaries", err)
+	}
+
+	err = os.Chmod(release.LocalFileName, 0775)
+	if err != nil {
+		return fmt.Errorf("%s\nFailed chmod", err)
+	}
+
 	return nil
 }
