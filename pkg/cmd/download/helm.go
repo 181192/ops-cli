@@ -2,6 +2,7 @@ package download
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -92,9 +93,14 @@ func (release *helmRelease) DownloadIfNotExists() error {
 		progress := getter.WithProgress(download.DefaultProgressBar)
 
 		logger.Infof("Attempting to download %s, version %s, to %q\n", release.Name, release.Version, release.LocalFileName)
-		tmpDir := util.GetConfigDirectory() + "/bin/.tmp"
 
-		err := getter.GetAny(tmpDir, release.URL, progress)
+		tmpDir, err := ioutil.TempDir("", "ops-cli")
+		if err != nil {
+			return fmt.Errorf("%s\nFailed to create temp directory", err)
+		}
+		defer os.RemoveAll(tmpDir)
+
+		err = getter.GetAny(tmpDir, release.URL, progress)
 		if err != nil {
 			return fmt.Errorf("%s\nFailed to to download external binaries", err)
 		}
@@ -109,11 +115,6 @@ func (release *helmRelease) DownloadIfNotExists() error {
 		err = os.Chmod(release.LocalFileName, 0775)
 		if err != nil {
 			return fmt.Errorf("%s\nFailed chmod", err)
-		}
-
-		err = os.RemoveAll(tmpDir)
-		if err != nil {
-			return fmt.Errorf("%s\nFailed delete tmp dir", err)
 		}
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
