@@ -1,7 +1,6 @@
 package download
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -49,8 +48,8 @@ var terraformCmd = &cobra.Command{
 	Use:   "terraform",
 	Short: "Downloads terraform",
 	Long:  `Downloads terraform.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return newTerraformRelease().DownloadIfNotExists()
+	Run: func(cmd *cobra.Command, args []string) {
+		newTerraformRelease().DownloadIfNotExists()
 	},
 }
 
@@ -78,7 +77,7 @@ func (release *terraformRelease) setDownloadURL() *terraformRelease {
 	return release
 }
 
-func (release *terraformRelease) DownloadIfNotExists() error {
+func (release *terraformRelease) DownloadIfNotExists() {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(download.DefaultProgressBar)
 
@@ -86,15 +85,15 @@ func (release *terraformRelease) DownloadIfNotExists() error {
 
 		err := getter.GetFile(release.LocalFileName, release.URL, progress)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed to to download external binaries", err)
+			logger.Fatalf("%s\nFailed to to download external binaries", err)
 		}
 
 		err = os.Chmod(release.LocalFileName, 0775)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed chmod", err)
+			logger.Fatalf("%s\nFailed chmod", err)
 		}
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
-	return nil
+	logger.Fatalf("%s\nFailed to check if binary exists")
 }

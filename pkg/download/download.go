@@ -1,7 +1,6 @@
 package download
 
 import (
-	"fmt"
 	"os"
 	"runtime"
 
@@ -34,20 +33,20 @@ func (release *Release) SetDownloadURL() *Release {
 }
 
 // DownloadIfNotExists downloads a github release if its not present in the local config folder
-func (release *Release) DownloadIfNotExists() error {
+func (release *Release) DownloadIfNotExists() {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(DefaultProgressBar)
 
 		logger.Infof("Attempting to download %s, version %s, to %q\n", release.Name, release.Version, release.LocalFileName)
 		err := getter.GetFile(release.LocalFileName, release.URL, progress)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed to to download external binaries", err)
+			logger.Fatalf("%s\nFailed to download external binaries", err)
 		}
 		os.Chmod(release.LocalFileName, 0775)
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
-	return nil
+	logger.Fatalf("%s\nFailed to check if binary exists")
 }
 
 // SetVersion return version from config file or latest if not specified

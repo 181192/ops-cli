@@ -1,7 +1,6 @@
 package download
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -50,8 +49,8 @@ var kubectlCmd = &cobra.Command{
 	Use:   "kubectl",
 	Short: "Downloads kubectl",
 	Long:  `Downloads kubectl.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return newKubectlRelease().DownloadIfNotExists()
+	Run: func(cmd *cobra.Command, args []string) {
+		newKubectlRelease().DownloadIfNotExists()
 	},
 }
 
@@ -77,7 +76,7 @@ func (release *kubectlRelease) setDownloadURL() *kubectlRelease {
 	return release
 }
 
-func (release *kubectlRelease) DownloadIfNotExists() error {
+func (release *kubectlRelease) DownloadIfNotExists() {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(download.DefaultProgressBar)
 
@@ -85,15 +84,15 @@ func (release *kubectlRelease) DownloadIfNotExists() error {
 
 		err := getter.GetFile(release.LocalFileName, release.URL, progress)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed to to download external binaries", err)
+			logger.Fatalf("%s\nFailed to to download external binaries", err)
 		}
 
 		err = os.Chmod(release.LocalFileName, 0775)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed chmod", err)
+			logger.Fatalf("%s\nFailed chmod", err)
 		}
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
-	return nil
+	logger.Fatalf("%s\nFailed to check if binary exists")
 }

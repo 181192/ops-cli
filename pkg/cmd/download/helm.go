@@ -1,7 +1,6 @@
 package download
 
 import (
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -46,8 +45,8 @@ var helmCmd = &cobra.Command{
 	Use:   "helm",
 	Short: "Downloads helm",
 	Long:  `Downloads helm.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return newHelmRelease().DownloadIfNotExists()
+	Run: func(cmd *cobra.Command, args []string) {
+		newHelmRelease().DownloadIfNotExists()
 	},
 }
 
@@ -91,25 +90,25 @@ func (release *helmRelease) DownloadIfNotExists() error {
 
 		tmpDir, err := ioutil.TempDir("", "ops-cli")
 		if err != nil {
-			return fmt.Errorf("%s\nFailed to create temp directory", err)
+			logger.Fatalf("%s\nFailed to create temp directory", err)
 		}
 		defer os.RemoveAll(tmpDir)
 
 		err = getter.GetAny(tmpDir, release.URL, progress)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed to to download external binaries", err)
+			logger.Fatalf("%s\nFailed to to download external binaries", err)
 		}
 
 		helmDirName := tmpDir + "/" + stringutils.Before(release.ArtifactName, ".") + "/helm"
 		logger.Debugf("Trying to move %s to %s", helmDirName, release.LocalFileName)
 		err = os.Rename(helmDirName, release.LocalFileName)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed to move binaries", err)
+			logger.Fatalf("%s\nFailed to move binaries", err)
 		}
 
 		err = os.Chmod(release.LocalFileName, 0775)
 		if err != nil {
-			return fmt.Errorf("%s\nFailed chmod", err)
+			logger.Fatalf("%s\nFailed chmod", err)
 		}
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)

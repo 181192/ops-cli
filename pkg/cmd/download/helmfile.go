@@ -33,7 +33,7 @@ var helmfileCmd = &cobra.Command{
 	Use:   "helmfile",
 	Short: "Downloads helmfile",
 	Long:  `Downloads helmfile`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return newHelmfileRelease().DownloadIfNotExists()
+	Run: func(cmd *cobra.Command, args []string) {
+		newHelmfileRelease().DownloadIfNotExists()
 	},
 }
