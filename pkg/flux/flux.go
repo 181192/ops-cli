@@ -32,7 +32,7 @@ type TemplateParameters struct {
 // FillInTemplates fils in custom helm values for flux and helm-operator
 func FillInTemplates(params *TemplateParameters) (map[string][]byte, error) {
 	result := map[string][]byte{}
-	err := vfsutil.WalkFiles(templates, "/", func(path string, info os.FileInfo, rs io.ReadSeeker, err error) error {
+	err := vfsutil.WalkFiles(templates, string(os.PathSeparator), func(path string, info os.FileInfo, rs io.ReadSeeker, err error) error {
 		if err != nil {
 			return fmt.Errorf("cannot walk embedded files: %s", err)
 		}

@@ -259,7 +259,7 @@ func RepoName(repoURL string) (string, error) {
 		return "", errors.Wrapf(err, "unable to parse git URL '%s'", repoURL)
 	}
 
-	parts := strings.Split(u.Path, "/")
+	parts := strings.Split(u.Path, string(os.PathSeparator))
 	if len(parts) == 0 {
 		return "", fmt.Errorf("could not find name of repository %s", repoURL)
 	}

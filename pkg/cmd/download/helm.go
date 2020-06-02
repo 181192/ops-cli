@@ -99,7 +99,7 @@ func (release *helmRelease) DownloadIfNotExists() error {
 			logger.Fatalf("%s\nFailed to to download external binaries", err)
 		}
 
-		helmDirName := tmpDir + "/" + stringutils.Before(release.ArtifactName, ".") + "/helm"
+		helmDirName := tmpDir + string(os.PathSeparator) + stringutils.Before(release.ArtifactName, ".") + string(os.PathSeparator) + "helm"
 		logger.Debugf("Trying to move %s to %s", helmDirName, release.LocalFileName)
 		err = os.Rename(helmDirName, release.LocalFileName)
 		if err != nil {

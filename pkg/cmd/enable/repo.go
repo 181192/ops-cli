@@ -120,7 +120,7 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 	// 	}
 	// }()
 
-	fluxManifestsDir := cloneDir + "/" + opts.GitFluxPath
+	fluxManifestsDir := cloneDir + string(os.PathSeparator) + opts.GitFluxPath
 
 	if err := helm.AddRepository(repoName, repoURL); err != nil {
 		logger.Fatalf("Failed to add registry %s %s. %s", repoName, repoURL, err)

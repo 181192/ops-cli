@@ -109,7 +109,7 @@ func (release *opsCliRelease) Update() error {
 		return fmt.Errorf("%s\nFailed to to download external binaries", err)
 	}
 
-	err = os.Rename(tmpDir+"/"+release.ArtifactName, release.LocalFileName)
+	err = os.Rename(tmpDir+string(os.PathSeparator)+release.ArtifactName, release.LocalFileName)
 	if err != nil {
 		return fmt.Errorf("%s\nFailed to move binaries", err)
 	}
