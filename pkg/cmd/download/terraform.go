@@ -77,7 +77,7 @@ func (release *terraformRelease) setDownloadURL() *terraformRelease {
 	return release
 }
 
-func (release *terraformRelease) DownloadIfNotExists() {
+func (release *terraformRelease) DownloadIfNotExists() error {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(download.DefaultProgressBar)
 
@@ -95,5 +95,5 @@ func (release *terraformRelease) DownloadIfNotExists() {
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
-	logger.Fatalf("%s\nFailed to check if binary exists")
+	return nil
 }

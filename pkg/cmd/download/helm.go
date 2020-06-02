@@ -75,7 +75,9 @@ func (release *helmRelease) setDownloadURL() *helmRelease {
 		}
 
 		if location.Path != "" {
-			release.Version = stringutils.After(location.Path, "tag/")
+			latestTag := stringutils.After(location.Path, "tag/")
+			logger.Debugf("Latest relese version of kubectl %s", latestTag)
+			release.Version = latestTag
 		}
 	}
 	release.URL = "https://get.helm.sh/helm-" + release.Version + "-" + release.ArtifactName

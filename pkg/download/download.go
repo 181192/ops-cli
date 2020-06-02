@@ -33,7 +33,7 @@ func (release *Release) SetDownloadURL() *Release {
 }
 
 // DownloadIfNotExists downloads a github release if its not present in the local config folder
-func (release *Release) DownloadIfNotExists() {
+func (release *Release) DownloadIfNotExists() error {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(DefaultProgressBar)
 
@@ -46,7 +46,7 @@ func (release *Release) DownloadIfNotExists() {
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
-	logger.Fatalf("%s\nFailed to check if binary exists")
+	return nil
 }
 
 // SetVersion return version from config file or latest if not specified

@@ -66,17 +66,20 @@ func (release *kubectlRelease) setDownloadURL() *kubectlRelease {
 		defer resp.Body.Close()
 		body, err := ioutil.ReadAll(resp.Body)
 
-		if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusOK {
+			latestTag := strings.TrimSpace(string(body))
+			logger.Debugf("Latest relese version of kubectl %s", latestTag)
+			release.Version = latestTag
+		} else {
 			logger.Warnf("Failed to read latest version, default to %s", kubectlVersion)
 			release.Version = kubectlVersion
 		}
-		release.Version = strings.TrimSpace(string(body))
 	}
 	release.URL = "https://storage.googleapis.com/kubernetes-release/release/" + release.Version + "/" + release.ArtifactName
 	return release
 }
 
-func (release *kubectlRelease) DownloadIfNotExists() {
+func (release *kubectlRelease) DownloadIfNotExists() error {
 	if _, err := os.Stat(release.LocalFileName); os.IsNotExist(err) {
 		progress := getter.WithProgress(download.DefaultProgressBar)
 
@@ -94,5 +97,5 @@ func (release *kubectlRelease) DownloadIfNotExists() {
 	} else {
 		logger.Infof("%s already exists at %s\n", release.Name, release.LocalFileName)
 	}
-	logger.Fatalf("%s\nFailed to check if binary exists")
+	return nil
 }
