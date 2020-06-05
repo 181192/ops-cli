@@ -34,6 +34,7 @@ const (
 	profileName     = "name"
 	profileOverlay  = "overlay"
 	profileRevision = "revision"
+	manifestOnly    = "manifest-only"
 )
 
 // InstallOpts are the installation options for Flux
@@ -42,7 +43,6 @@ type InstallOpts struct {
 	GitPaths                 []string
 	GitLabel                 string
 	GitFluxPath              string
-	Namespace                string
 	WithHelm                 bool
 	HelmVersions             []string
 	ManifestGeneration       bool
@@ -52,12 +52,14 @@ type InstallOpts struct {
 	FluxChartVersion         string
 	HelmOperatorChartVersion string
 	SkipInstall              bool
+	KubernetesOpts           KubernetesOpts
 }
 
 // AddCommonFlagsForFlux configures the flags required to install Flux on a
 // cluster and have it point to the specified Git repository.
 func AddCommonFlagsForFlux(fs *pflag.FlagSet, opts *InstallOpts) {
 	AddCommonFlagsForGit(fs, &opts.GitOptions)
+	AddCommonFlagsForKubernetes(fs, &opts.KubernetesOpts)
 
 	fs.StringSliceVar(&opts.GitPaths, gitPaths, []string{},
 		"Relative paths within the Git repo for Flux to locate Kubernetes manifests")
@@ -65,8 +67,6 @@ func AddCommonFlagsForFlux(fs *pflag.FlagSet, opts *InstallOpts) {
 		"Git label to keep track of Flux's sync progress; this is equivalent to overriding --git-sync-tag and --git-notes-ref in Flux")
 	fs.StringVar(&opts.GitFluxPath, gitFluxPath, "manifests-flux/",
 		"Directory within the Git repository where to commit the Flux manifests")
-	fs.StringVar(&opts.Namespace, namespace, "flux-system",
-		"Cluster namespace where to install Flux and the Helm Operator")
 	fs.StringSliceVar(&opts.HelmVersions, helmVersions, []string{"v3"},
 		"Versions of Helm to enable")
 	fs.BoolVar(&opts.WithHelm, withHelm, true,
@@ -119,9 +119,10 @@ func ValidateGitOptions(opts *git.Options) error {
 // AddCommonFlagsForProfile configures the flags required to enable a Quick
 // Start profile.
 func AddCommonFlagsForProfile(fs *pflag.FlagSet, opts *profile.Options) {
-	fs.StringVarP(&opts.Name, profileName, "", "", "Name or URL of the Quick Start profile. For example, app-dev.")
-	fs.StringVarP(&opts.Overlay, profileOverlay, "", "nginx", "Name of the overlay profile. For example nginx,linkerd or istio.")
-	fs.StringVarP(&opts.Revision, profileRevision, "", "master", "Revision of the Quick Start profile.")
+	fs.StringVar(&opts.Name, profileName, "", "Name or URL of the Quick Start profile. For example, app-dev.")
+	fs.StringVar(&opts.Overlay, profileOverlay, "nginx", "Name of the overlay profile. For example nginx,linkerd or istio.")
+	fs.StringVar(&opts.Revision, profileRevision, "master", "Revision of the Quick Start profile.")
+	fs.BoolVar(&opts.ManifestOnly, manifestOnly, false, "Only update manifests directory, ignore profile.")
 }
 
 // gitOpsConfigLoader handles loading of ClusterConfigFile v.s. using CLI

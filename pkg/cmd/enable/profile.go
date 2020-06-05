@@ -107,9 +107,9 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 	// 	return err
 	// }
 
-	usersRepoDir := "./"
-	logger.Debugf("Directory %s will be used to clone the configuration repository and install the profile", usersRepoDir)
-	profileOutputPath := "./"
+	usersRepoDir := "." + string(os.PathSeparator)
+	logger.Debugf("Directory %s will be used to clone the configuration repository and install the profile %s", usersRepoDir, opts.profileOptions.Overlay)
+	profileOutputPath := "." + string(os.PathSeparator)
 
 	// gitClient := git.NewGitClient(git.ClientParams{
 	// 	PrivateSSHKeyPath: opts.gitOptions.PrivateSSHKeyPath,
@@ -148,14 +148,18 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 		return errors.Wrap(err, "error generating profile")
 	}
 
-	err = os.MkdirAll(cmd.ClusterConfig.Name+"/plattform", 0755)
+	err = os.MkdirAll(cmd.ClusterConfig.Name+string(os.PathSeparator)+"plattform", 0755)
 	if err != nil {
 		return errors.Wrap(err, "error creating folder")
 	}
 
-	err = file.CopyDirectory("profiles/"+opts.profileOptions.Overlay, cmd.ClusterConfig.Name+"/plattform")
-	if err != nil {
-		return errors.Wrapf(err, "error moving profiles to %s", cmd.ClusterConfig.Name)
+	if !opts.profileOptions.ManifestOnly {
+		// TODO: Merge yamls with existing
+		logger.Debug("Copy files to profile")
+		err = file.CopyDirectory("profiles"+string(os.PathSeparator)+opts.profileOptions.Overlay, cmd.ClusterConfig.Name+string(os.PathSeparator)+"plattform")
+		if err != nil {
+			return errors.Wrapf(err, "error moving profiles to %s", cmd.ClusterConfig.Name)
+		}
 	}
 
 	err = os.RemoveAll("profiles")
