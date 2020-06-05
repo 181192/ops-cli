@@ -1,6 +1,7 @@
 package kubernetes
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -30,7 +31,7 @@ type PortForward struct {
 // PodsForSelector get pods via label selector
 func (client *Client) PodsForSelector(namespace, labelSelector string) (*v1.PodList, error) {
 	podGet := client.Get().Resource("pods").Namespace(namespace).Param("labelSelector", labelSelector)
-	obj, err := podGet.Do().Get()
+	obj, err := podGet.Do(context.Background()).Get()
 	if err != nil {
 		return nil, fmt.Errorf("failed retrieving pod: %v", err)
 	}
@@ -65,7 +66,7 @@ func (client *Client) BuildPortForwarder(podName string, ns string, localPort in
 	// Run the same check as k8s.io/kubectl/pkg/cmd/portforward/portforward.go
 	// so that we will fail early if there is a problem contacting API server.
 	podGet := client.Get().Resource("pods").Namespace(ns).Name(podName)
-	obj, err := podGet.Do().Get()
+	obj, err := podGet.Do(context.Background()).Get()
 	if err != nil {
 		return nil, fmt.Errorf("failed retrieving pod: %v", err)
 	}
