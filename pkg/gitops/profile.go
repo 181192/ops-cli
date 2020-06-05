@@ -137,7 +137,7 @@ func (p *Profile) ignoreFiles(baseDir string) error {
 			if err != nil {
 				return err
 			}
-			logger.Infof("ignored %q", pathToIgnore)
+			logger.Debugf("ignored %q", pathToIgnore)
 		}
 
 		// Remove the ignore file after finish
