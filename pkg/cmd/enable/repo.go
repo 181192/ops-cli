@@ -104,7 +104,7 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 	// 	Bootstrap: true,
 	// }
 
-	cloneDir := "./"
+	cloneDir := "." + string(os.PathSeparator)
 	// cloneDir, err := gitClient.CloneRepoInTmpDir("ops-cli-bootstrap-", options)
 	// if err != nil {
 	// 	return errors.Wrapf(err, "cannot clone repository %s", gitOpts.URL)
@@ -190,16 +190,16 @@ func doEnableRepo(cmd *cmdutils.Cmd, opts *cmdutils.InstallOpts) error {
 	valueOpts := &values.Options{}
 
 	fluxValues := clusterName + "-flux-values.yaml"
-	fluxChartPath := fluxManifestsDir + "/flux"
+	fluxChartPath := fluxManifestsDir + string(os.PathSeparator) + "flux"
 	valueOpts.ValueFiles = []string{filepath.Join(fluxManifestsDir, fluxValues)}
-	if err := helm.UpgradeInstallChart("flux", fluxChartPath, valueOpts, opts.Namespace); err != nil {
+	if err := helm.UpgradeInstallChart("flux", fluxChartPath, valueOpts, opts); err != nil {
 		logger.Fatalf("Failed to install chart %s. %s", fluxChartName, err)
 	}
 
 	helmOperatorValues := clusterName + "-helm-operator-values.yaml"
-	helmOperatorChartPath := fluxManifestsDir + "/helm-operator"
+	helmOperatorChartPath := fluxManifestsDir + string(os.PathSeparator) + "helm-operator"
 	valueOpts.ValueFiles = []string{filepath.Join(fluxManifestsDir, helmOperatorValues)}
-	if err := helm.UpgradeInstallChart("helm-operator", helmOperatorChartPath, valueOpts, opts.Namespace); err != nil {
+	if err := helm.UpgradeInstallChart("helm-operator", helmOperatorChartPath, valueOpts, opts); err != nil {
 		logger.Fatalf("Failed to install chart %s. %s", helmOperatorChartName, err)
 	}
 

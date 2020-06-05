@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/gofrs/flock"
 	"github.com/pkg/errors"
 	logger "github.com/sirupsen/logrus"
@@ -76,9 +77,13 @@ func PullChart(chartName string, chartVersion string) error {
 func PullChartUntarToDir(chartName string, chartVersion string, dirName string) error {
 	logger.Debug("New pull client")
 	actionConfig := new(action.Configuration)
-	actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), debug)
 
-	client := action.NewPull()
+	helmDriver := os.Getenv("HELM_DRIVER")
+	if err := actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), helmDriver, debug); err != nil {
+		logger.Fatal(err)
+	}
+
+	client := NewPull()
 	client.Settings = settings
 	client.UntarDir = dirName
 	client.Untar = true
@@ -101,13 +106,17 @@ func PullChartUntarToDir(chartName string, chartVersion string, dirName string) 
 func AddRepository(repoName string, repoURL string) error {
 	logger.Debug("New repository client")
 	actionConfig := new(action.Configuration)
-	actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), debug)
+
+	helmDriver := os.Getenv("HELM_DRIVER")
+	if err := actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), helmDriver, debug); err != nil {
+		logger.Fatal(err)
+	}
 
 	opts := &repoAddOptions{}
 
 	opts.name = repoName
 	opts.url = repoURL
-	opts.repoFile = settings.RegistryConfig
+	opts.repoFile = settings.RepositoryConfig
 	opts.repoCache = settings.RepositoryCache
 
 	return opts.run()
@@ -161,6 +170,10 @@ func (opts *repoAddOptions) run() error {
 		return err
 	}
 
+	if opts.repoCache != "" {
+		r.CachePath = opts.repoCache
+	}
+
 	if _, err := r.DownloadIndexFile(); err != nil {
 		return errors.Wrapf(err, "looks like %q is not a valid chart repository or cannot be reached", opts.url)
 	}
@@ -175,11 +188,24 @@ func (opts *repoAddOptions) run() error {
 	return nil
 }
 
+func envOr(name, def string) string {
+	if v, ok := os.LookupEnv(name); ok {
+		return v
+	}
+	return def
+}
+
 // UpgradeInstallChart upgrades a existing release or creates it
-func UpgradeInstallChart(releaseName string, chartPath string, valueOpts *values.Options, namespace string) error {
+func UpgradeInstallChart(releaseName string, chartPath string, valueOpts *values.Options, opts *cmdutils.InstallOpts) error {
 	logger.Debug("New upgrade-install client")
 	actionConfig := new(action.Configuration)
-	actionConfig.Init(settings.RESTClientGetter(), settings.Namespace(), os.Getenv("HELM_DRIVER"), debug)
+
+	namespace := opts.KubernetesOpts.Namespace
+
+	helmDriver := os.Getenv("HELM_DRIVER")
+	if err := actionConfig.Init(settings.RESTClientGetter(), namespace, helmDriver, debug); err != nil {
+		logger.Fatal(err)
+	}
 
 	client := action.NewUpgrade(actionConfig)
 	client.Namespace = namespace
@@ -274,7 +300,6 @@ func runInstall(client *action.Install, releaseName string, chartPath string, va
 		logger.Warning("This chart is deprecated")
 	}
 
-	client.Namespace = settings.Namespace()
 	_, err = client.Run(chartRequested, vals)
 	if err != nil {
 		return err
