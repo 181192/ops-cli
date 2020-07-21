@@ -33,7 +33,7 @@ jobs:
         run: make deps
 
       - name: Build
-        run: make build-single
+        run: make build
 
       - name: Test
         env:
