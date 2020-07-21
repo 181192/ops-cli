@@ -1,6 +1,6 @@
 module github.com/181192/ops-cli
 
-go 1.13
+go 1.14
 
 require (
 	github.com/181192/ops-cli/pkg/flux v0.0.0-00010101000000-000000000000
