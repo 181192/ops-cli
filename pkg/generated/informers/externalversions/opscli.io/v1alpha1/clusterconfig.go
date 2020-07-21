@@ -19,6 +19,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"context"
 	time "time"
 
 	opscliiov1alpha1 "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
@@ -60,13 +61,13 @@ func NewFilteredClusterConfigInformer(client versioned.Interface, resyncPeriod t
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.OpscliV1alpha1().ClusterConfigs().List(options)
+				return client.OpscliV1alpha1().ClusterConfigs().List(context.TODO(), options)
 			},
 			WatchFunc: func(options v1.ListOptions) (watch.Interface, error) {
 				if tweakListOptions != nil {
 					tweakListOptions(&options)
 				}
-				return client.OpscliV1alpha1().ClusterConfigs().Watch(options)
+				return client.OpscliV1alpha1().ClusterConfigs().Watch(context.TODO(), options)
 			},
 		},
 		&opscliiov1alpha1.ClusterConfig{},

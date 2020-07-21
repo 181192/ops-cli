@@ -173,31 +173,34 @@ func (c *clusterConfigController) Cache() ClusterConfigCache {
 }
 
 func (c *clusterConfigController) Create(obj *v1alpha1.ClusterConfig) (*v1alpha1.ClusterConfig, error) {
-	return c.clientGetter.ClusterConfigs().Create(obj)
+	return c.clientGetter.ClusterConfigs().Create(context.TODO(), obj, metav1.CreateOptions{})
 }
 
 func (c *clusterConfigController) Update(obj *v1alpha1.ClusterConfig) (*v1alpha1.ClusterConfig, error) {
-	return c.clientGetter.ClusterConfigs().Update(obj)
+	return c.clientGetter.ClusterConfigs().Update(context.TODO(), obj, metav1.UpdateOptions{})
 }
 
 func (c *clusterConfigController) Delete(name string, options *metav1.DeleteOptions) error {
-	return c.clientGetter.ClusterConfigs().Delete(name, options)
+	if options == nil {
+		options = &metav1.DeleteOptions{}
+	}
+	return c.clientGetter.ClusterConfigs().Delete(context.TODO(), name, *options)
 }
 
 func (c *clusterConfigController) Get(name string, options metav1.GetOptions) (*v1alpha1.ClusterConfig, error) {
-	return c.clientGetter.ClusterConfigs().Get(name, options)
+	return c.clientGetter.ClusterConfigs().Get(context.TODO(), name, options)
 }
 
 func (c *clusterConfigController) List(opts metav1.ListOptions) (*v1alpha1.ClusterConfigList, error) {
-	return c.clientGetter.ClusterConfigs().List(opts)
+	return c.clientGetter.ClusterConfigs().List(context.TODO(), opts)
 }
 
 func (c *clusterConfigController) Watch(opts metav1.ListOptions) (watch.Interface, error) {
-	return c.clientGetter.ClusterConfigs().Watch(opts)
+	return c.clientGetter.ClusterConfigs().Watch(context.TODO(), opts)
 }
 
 func (c *clusterConfigController) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *v1alpha1.ClusterConfig, err error) {
-	return c.clientGetter.ClusterConfigs().Patch(name, pt, data, subresources...)
+	return c.clientGetter.ClusterConfigs().Patch(context.TODO(), name, pt, data, metav1.PatchOptions{}, subresources...)
 }
 
 type clusterConfigCache struct {
@@ -226,6 +229,7 @@ func (c *clusterConfigCache) GetByIndex(indexName, key string) (result []*v1alph
 	if err != nil {
 		return nil, err
 	}
+	result = make([]*v1alpha1.ClusterConfig, 0, len(objs))
 	for _, obj := range objs {
 		result = append(result, obj.(*v1alpha1.ClusterConfig))
 	}

@@ -51,7 +51,7 @@ func DefaultClusterConfig() *ClusterConfig {
 	return &ClusterConfig{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ClusterConfig",
-			APIVersion: SchemeGroupVersion.String(),
+			APIVersion: "v1alpha1",
 		},
 		ObjectMeta: metav1.ObjectMeta{},
 		Spec:       &ClusterConfigSpec{},
