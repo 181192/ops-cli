@@ -6,11 +6,13 @@ clean-deps:
 deps:
 	go mod download
 
-test-build:
-	CGO_ENABLED=0 go build -o build/ops -ldflags "-X 'github.com/181192/ops-cli/pkg/util/version.Version=$$(git describe --tags --abbrev=0)' -X 'github.com/181192/ops-cli/pkg/util/version.GitCommit=$$(git rev-parse --short HEAD)'"
+test-build: build-single
 	sudo cp build/ops /usr/local/bin/ops
 
 build:
+	CGO_ENABLED=0 go build -o build/ops -ldflags "-X 'github.com/181192/ops-cli/pkg/util/version.Version=$$(git describe --tags --abbrev=0)' -X 'github.com/181192/ops-cli/pkg/util/version.GitCommit=$$(git rev-parse --short HEAD)'"
+
+build-all:
 	for arch in amd64; do \
 			for os in linux darwin windows; do \
 				CGO_ENABLED=0 GOOS=$$os GOARCH=$$arch go build -o "build/ops_cli_"$$os"_$$arch" $(LDFLAGS) -ldflags "-X 'github.com/181192/ops-cli/pkg/util/version.Version=$$(git describe --tags --abbrev=0)' -X 'github.com/181192/ops-cli/pkg/util/version.GitCommit=$$(git rev-parse --short HEAD)'"; \
