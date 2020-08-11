@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -48,7 +49,7 @@ func GetConfigDirectory() string {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	return home + "/.ops"
+	return home + string(os.PathSeparator) + ".ops"
 }
 
 // GetExecutable returns the path of the executable
@@ -58,4 +59,12 @@ func GetExecutable() string {
 		panic(err)
 	}
 	return ex
+}
+
+// GetWinExtension returns windows file extentions if running in windows
+func GetWinExtension() string {
+	if runtime.GOOS == "windows" {
+		return ".exe"
+	}
+	return ""
 }
