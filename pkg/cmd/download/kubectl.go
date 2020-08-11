@@ -37,7 +37,7 @@ func newKubectlRelease() *kubectlRelease {
 		},
 	}
 
-	release.SetVersion()
+	release.SetVersion(version)
 	release.SetArtifactName(artifactsNames)
 	release.setDownloadURL()
 

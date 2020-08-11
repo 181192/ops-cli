@@ -50,11 +50,12 @@ func (release *Release) DownloadIfNotExists() error {
 }
 
 // SetVersion return version from config file or latest if not specified
-func (release *Release) SetVersion() *Release {
-	version := viper.GetString("apps. " + release.Name)
+func (release *Release) SetVersion(version string) *Release {
 	if version == "" {
-		logger.Info("No version set in config, using latest")
-		version = "latest"
+		if version = viper.GetString("apps. " + release.Name); version == "" {
+			logger.Info("No version set in config, using latest")
+			version = "latest"
+		}
 	}
 
 	release.Version = version

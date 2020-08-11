@@ -36,7 +36,7 @@ func newTerraformRelease() *terraformRelease {
 		},
 	}
 
-	release.SetVersion()
+	release.SetVersion(version)
 	release.SetArtifactName(artifactsNames)
 	release.setDownloadURL()
 

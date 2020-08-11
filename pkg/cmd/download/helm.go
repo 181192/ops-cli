@@ -33,7 +33,7 @@ func newHelmRelease() *helmRelease {
 		},
 	}
 
-	release.SetVersion()
+	release.SetVersion(version)
 	release.SetArtifactName(artifactsNames)
 	release.setDownloadURL()
 

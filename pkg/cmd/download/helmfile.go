@@ -21,7 +21,7 @@ func newHelmfileRelease() *download.Release {
 		LocalFileName: wrapper.HelmfileBinary,
 	}
 
-	release.SetVersion()
+	release.SetVersion(version)
 	release.SetArtifactName(artifactsNames)
 	release.SetDownloadURL()
 
