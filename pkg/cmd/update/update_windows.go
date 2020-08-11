@@ -24,7 +24,9 @@ func (release *opsCliRelease) Update() error {
 	}
 
 	if !isWinAdmin() {
-		runElevated()
+		if err := runElevated(); err != nil {
+			return err
+		}
 	}
 
 	progress := getter.WithProgress(download.DefaultProgressBar)
@@ -62,7 +64,7 @@ func isWinAdmin() bool {
 	return true
 }
 
-func runElevated() {
+func runElevated() error {
 	verb := "runas"
 	exe, _ := os.Executable()
 	cwd, _ := os.Getwd()
@@ -79,4 +81,6 @@ func runElevated() {
 	if err != nil {
 		return fmt.Errorf("%s\nFailed to exec as elevated user", err)
 	}
+
+	return nil
 }
