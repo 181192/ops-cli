@@ -11,8 +11,8 @@ var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update ops-cli to latest version",
 	Long:  `Update ops-cli to latest version`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return newOpsCliRelease().Update()
+	Run: func(cmd *cobra.Command, args []string) {
+		newOpsCliRelease().Update()
 	},
 }
 

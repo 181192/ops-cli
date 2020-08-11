@@ -16,16 +16,16 @@ import (
 )
 
 // Update downloads a github release if its not present in the local config folder
-func (release *opsCliRelease) Update() error {
+func (release *opsCliRelease) Update() {
 
 	url, update := release.getLatestDownloadURL()
 	if !update {
-		return nil
+		return
 	}
 
 	if !isWinAdmin() {
 		if err := runElevated(); err != nil {
-			return err
+			logger.Fatal(err)
 		}
 	}
 
@@ -35,26 +35,24 @@ func (release *opsCliRelease) Update() error {
 
 	tmpDir, err := ioutil.TempDir("", "ops-cli")
 	if err != nil {
-		return fmt.Errorf("%s\nFailed to create temp directory", err)
+		logger.Fatalf("%s\nFailed to create temp directory", err)
 	}
 	defer os.RemoveAll(tmpDir)
 
 	err = getter.GetAny(tmpDir, url, progress)
 	if err != nil {
-		return fmt.Errorf("%s\nFailed to to download external binaries", err)
+		logger.Fatalf("%s\nFailed to to download external binaries", err)
 	}
 
 	err = os.Rename(tmpDir+string(os.PathSeparator)+release.ArtifactName, release.LocalFileName)
 	if err != nil {
-		return fmt.Errorf("%s\nFailed to move binaries", err)
+		logger.Fatalf("%s\nFailed to move binaries", err)
 	}
 
 	err = os.Chmod(release.LocalFileName, 0775)
 	if err != nil {
-		return fmt.Errorf("%s\nFailed chmod", err)
+		logger.Fatalf("%s\nFailed chmod", err)
 	}
-
-	return nil
 }
 
 func isWinAdmin() bool {
