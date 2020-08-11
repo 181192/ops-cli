@@ -15,7 +15,7 @@ import (
 // Update downloads a github release if its not present in the local config folder
 func (release *opsCliRelease) Update() error {
 
-	url, update := release.getLatestDownloadUrl()
+	url, update := release.getLatestDownloadURL()
 	if !update {
 		return nil
 	}

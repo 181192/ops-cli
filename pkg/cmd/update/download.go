@@ -9,7 +9,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 )
 
-func (release *opsCliRelease) getLatestDownloadUrl() (string, bool) {
+func (release *opsCliRelease) getLatestDownloadURL() (string, bool) {
 
 	current, err := semver.NewVersion(version.Version)
 	logger.Debugf("Current version of ops-cli %s", current)
