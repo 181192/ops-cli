@@ -44,6 +44,13 @@ func (release *opsCliRelease) Update() {
 		logger.Fatalf("%s\nFailed to to download external binaries", err)
 	}
 
+	tmpExecutable := release.LocalFileName + ".tmp"
+	err = os.Rename(release.LocalFileName, tmpExecutable)
+	if err != nil {
+		logger.Fatalf("%s\nFailed to rename running executable", err)
+	}
+	defer cleanUpTmpExecutable(tmpExecutable)
+
 	err = os.Rename(tmpDir+string(os.PathSeparator)+release.ArtifactName, release.LocalFileName)
 	if err != nil {
 		logger.Fatalf("%s\nFailed to move binaries", err)
@@ -80,5 +87,18 @@ func runElevated() error {
 		return fmt.Errorf("%s\nFailed to exec as elevated user", err)
 	}
 
+	// Exit non elevated executable
+	os.Exit(0)
+
 	return nil
+}
+
+func cleanUpTmpExecutable(executable string) {
+	var sI syscall.StartupInfo
+	var pI syscall.ProcessInformation
+	argv := syscall.StringToUTF16Ptr(os.Getenv("windir") + "\\system32\\cmd.exe /C del " + executable)
+	err := syscall.CreateProcess(nil, argv, nil, nil, true, 0, nil, nil, &sI, &pI)
+	if err != nil {
+		logger.Fatalf("%s\nFailed to delete tmp executable", err)
+	}
 }
