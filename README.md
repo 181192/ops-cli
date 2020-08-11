@@ -6,12 +6,12 @@
 # Darwin/macOS
 curl -sSL https://github.com/181192/ops-cli/releases/latest/download/ops_cli_darwin_amd64 -o ops \
   && chmod +x ops \
-  && mv ops /usr/local/bin/ops
+  && sudo mv ops /usr/local/bin/ops
 
 # Linux
 curl -sSL https://github.com/181192/ops-cli/releases/latest/download/ops_cli_linux_amd64 -o ops \
   && chmod +x ops \
-  && mv ops /usr/local/bin/ops
+  && sudo mv ops /usr/local/bin/ops
 
 # Windows (run terminal as admin)
 Invoke-WebRequest -Uri https://github.com/181192/ops-cli/releases/latest/download/ops_cli_windows_amd64 -OutFile ops.exe
