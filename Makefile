@@ -6,7 +6,7 @@ clean-deps:
 deps:
 	go mod download
 
-test-build: build-single
+test-build: build
 	sudo cp build/ops /usr/local/bin/ops
 
 build:
