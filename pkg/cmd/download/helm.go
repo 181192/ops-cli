@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/181192/ops-cli/pkg/download"
+	"github.com/181192/ops-cli/pkg/util"
 	"github.com/181192/ops-cli/pkg/util/stringutils"
 	"github.com/181192/ops-cli/pkg/wrapper"
 	"github.com/hashicorp/go-getter"
@@ -101,7 +102,7 @@ func (release *helmRelease) DownloadIfNotExists() error {
 			logger.Fatalf("%s\nFailed to to download external binaries", err)
 		}
 
-		helmDirName := tmpDir + string(os.PathSeparator) + stringutils.Before(release.ArtifactName, ".") + string(os.PathSeparator) + "helm"
+		helmDirName := tmpDir + string(os.PathSeparator) + stringutils.Before(release.ArtifactName, ".") + string(os.PathSeparator) + "helm" + util.GetWinExtension()
 		logger.Debugf("Trying to move %s to %s", helmDirName, release.LocalFileName)
 		err = os.Rename(helmDirName, release.LocalFileName)
 		if err != nil {
