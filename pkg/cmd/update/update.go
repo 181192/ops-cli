@@ -28,7 +28,7 @@ func newOpsCliRelease() *opsCliRelease {
 		"linux/amd64":   "ops_cli_linux_amd64",
 		"linux/arm":     "ops_cli_linux_arm",
 		"linux/arm64":   "ops_cli_linux_arm64",
-		"windows/amd64": "ops_cli_windows_amd64",
+		"windows/amd64": "ops_cli_windows_amd64.exe",
 	}
 
 	release := &opsCliRelease{
