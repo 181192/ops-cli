@@ -22,14 +22,13 @@ require (
 	github.com/stretchr/testify v1.5.1
 	github.com/tidwall/gjson v1.6.0
 	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
-	gonum.org/v1/netlib v0.0.0-20190331212654-76723241ea4e // indirect
+	golang.org/x/sys v0.0.0-20191022100944-742c48ecaeb7
 	helm.sh/helm/v3 v3.2.1
 	k8s.io/api v0.18.0
 	k8s.io/apimachinery v0.18.0
 	k8s.io/client-go v0.18.0
 	k8s.io/kops v1.11.0
 	rsc.io/letsencrypt v0.0.3 // indirect
-	sigs.k8s.io/structured-merge-diff v1.0.1-0.20191108220359-b1b620dd3f06 // indirect
 	sigs.k8s.io/yaml v1.2.0
 )
 
