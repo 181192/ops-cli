@@ -1,10 +1,25 @@
 package wrapper
 
-import "github.com/181192/ops-cli/pkg/util"
+import (
+	"os"
+
+	"github.com/181192/ops-cli/pkg/util"
+)
 
 var (
-	HelmBinary      = util.GetConfigDirectory() + "/bin/helm"
-	HelmfileBinary  = util.GetConfigDirectory() + "/bin/helmfile"
-	TerraformBinary = util.GetConfigDirectory() + "/bin/terraform"
-	KubectlBinary   = util.GetConfigDirectory() + "/bin/kubectl"
+	// HelmBinary path to helm binary
+	HelmBinary = getBinaryPath("helm")
+
+	// HelmfileBinary path to helmfile binary
+	HelmfileBinary = getBinaryPath("helmfile")
+
+	// TerraformBinary path to terraform binary
+	TerraformBinary = getBinaryPath("terraform")
+
+	// KubectlBinary path to kubectl binary
+	KubectlBinary = getBinaryPath("kubectl")
 )
+
+func getBinaryPath(binary string) string {
+	return util.GetConfigDirectory() + string(os.PathSeparator) + "bin" + string(os.PathSeparator) + binary + util.GetWinExtension()
+}
