@@ -11,6 +11,11 @@ import (
 
 func (release *opsCliRelease) getLatestDownloadURL() (string, bool) {
 
+	if version.Version == "unversioned" {
+		logger.Warnf("Using non released version, setting version to 0.0 for testing purposes")
+		version.Version = "0.0"
+	}
+
 	current, err := semver.NewVersion(version.Version)
 	logger.Debugf("Current version of ops-cli %s", current)
 
