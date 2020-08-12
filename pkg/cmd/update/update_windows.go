@@ -23,7 +23,12 @@ func (release *opsCliRelease) Update() {
 		return
 	}
 
-	if !isWinAdmin() {
+	winAdmin, err := isWinAdmin()
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	if !winAdmin {
 		if err := runElevated(); err != nil {
 			logger.Fatal(err)
 		}
@@ -62,11 +67,29 @@ func (release *opsCliRelease) Update() {
 	}
 }
 
-func isWinAdmin() bool {
-	if _, err := os.Open("\\\\.\\PHYSICALDRIVE0"); err != nil {
-		return false
+func isWinAdmin() (bool, error) {
+	var sid *windows.SID
+
+	err := windows.AllocateAndInitializeSid(
+		&windows.SECURITY_NT_AUTHORITY,
+		2,
+		windows.SECURITY_BUILTIN_DOMAIN_RID,
+		windows.DOMAIN_ALIAS_RID_ADMINS,
+		0, 0, 0, 0, 0, 0,
+		&sid)
+	if err != nil {
+		return false, fmt.Errorf("sid error: %s", err)
 	}
-	return true
+	defer windows.FreeSid(sid)
+
+	token := windows.Token(0)
+
+	member, err := token.IsMember(sid)
+	if err != nil {
+		return false, fmt.Errorf("token membership error: %s", err)
+	}
+
+	return member, nil
 }
 
 func runElevated() error {
