@@ -23,66 +23,55 @@ type Options struct {
 
 // Command will create the `dashboard` commands
 func Command(flagGrouping *cmdutils.FlagGrouping) *cobra.Command {
-	var opts Options
 	dashboards := MakeDashboards()
-	validArgs := []string{}
-	helpText := "Available dashboards:\n\n"
+	helpText := "Dashboards"
+	helpTextLong := "Available dashboards:\n\n"
 
 	for _, d := range dashboards {
 		helpText += fmt.Sprintf("  - %s\n", d.Name)
-		validArgs = append(validArgs, d.Name)
 	}
 
 	dashboardCmd := &cobra.Command{
-		Use:       "dashboard",
-		Aliases:   []string{"d"},
-		Short:     helpText,
-		Long:      helpText,
-		ValidArgs: validArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := doPortForward(cmd, opts, args, dashboards); err != nil {
-				logger.Fatal(err)
-			}
-		},
+		Use:     "dashboard",
+		Aliases: []string{"d"},
+		Short:   helpText,
+		Long:    helpTextLong,
 	}
 
-	flagSetGroup := flagGrouping.New(dashboardCmd)
+	return generateDashboardCommands(flagGrouping, dashboardCmd, dashboards)
+}
 
-	flagSetGroup.InFlagSet("Dashboard", func(fs *pflag.FlagSet) {
-		fs.IntVarP(&opts.Port, "port", "p", 0, "Target port to forward to")
-		fs.StringVarP(&opts.LabelSelector, "label-selector", "l", "",
-			"Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
-		cmdutils.AddCommonFlagsForKubernetes(fs, &opts.KubeOptions)
-	})
+func generateDashboardCommands(flagGrouping *cmdutils.FlagGrouping, dashboardCmd *cobra.Command, dashboards []Dashboard) *cobra.Command {
+	for _, dashboard := range dashboards {
+		var opts Options
 
-	flagSetGroup.AddTo(dashboardCmd)
+		cmdutils.AddResourceCmd(flagGrouping, dashboardCmd, func(cmd *cmdutils.Cmd) {
+			cmd.CobraCommand.Use = dashboard.Name
+			cmd.CobraCommand.Run = func(_ *cobra.Command, args []string) {
+				for _, d := range dashboards {
+					if d.Name == cmd.CobraCommand.Use {
+						dashboard = d
+						break
+					}
+				}
+
+				if err := doPortForward(cmd.CobraCommand, &opts, args, &dashboard); err != nil {
+					logger.Fatal(err)
+				}
+			}
+			cmd.FlagSetGroup.InFlagSet("Dashboard", func(fs *pflag.FlagSet) {
+				fs.IntVarP(&opts.Port, "port", "p", 0, "Target port to forward to")
+				fs.StringVarP(&opts.LabelSelector, "label-selector", "l", "",
+					"Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
+				cmdutils.AddCommonFlagsForKubernetes(fs, &opts.KubeOptions, dashboard.Namespace)
+			})
+		})
+	}
 
 	return dashboardCmd
 }
 
-func doPortForward(cmd *cobra.Command, opts Options, args []string, dashboards []Dashboard) error {
-	var dashboard *Dashboard
-
-	if len(args) == 0 {
-		return cmd.Help()
-	}
-
-	if len(args) > 1 {
-		return fmt.Errorf("only one argument is allowed to be used as a name")
-	}
-
-	if len(args) == 1 {
-		for _, d := range dashboards {
-			if d.Name == args[0] {
-				dashboard = &d
-				break
-			}
-		}
-	}
-
-	if dashboard == nil {
-		return fmt.Errorf("cannot get dashboard for: %s", args[0])
-	}
+func doPortForward(cmd *cobra.Command, opts *Options, args []string, dashboard *Dashboard) error {
 
 	kubeConfig := opts.KubeOptions.KubeConfig
 	kubeContext := opts.KubeOptions.KubeContext
