@@ -3,63 +3,65 @@ package completion
 import (
 	"os"
 
-	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
+var completionCmd = &cobra.Command{
+	Use:   "completion [bash|zsh|fish|powershell]",
+	Short: "Generate completion script",
+	Long: `To load completions:
+
+Bash:
+
+$ source <(ops completion bash)
+
+# To load completions for each session, execute once:
+Linux:
+  $ ops completion bash > /etc/bash_completion.d/ops
+MacOS:
+  $ ops completion bash > /usr/local/etc/bash_completion.d/ops
+
+Zsh:
+
+# If shell completion is not already enabled in your environment you will need
+# to enable it.  You can execute the following once:
+
+$ echo "autoload -U compinit; compinit" >> ~/.zshrc
+
+# To load completions for each session, execute once:
+$ ops completion zsh > "${fpath[1]}/_ops"
+
+# You will need to start a new shell for this setup to take effect.
+
+Fish:
+
+$ ops completion fish | source
+
+# To load completions for each session, execute once:
+$ ops completion fish > ~/.config/fish/completions/ops.fish
+`,
+	DisableFlagsInUseLine: true,
+	ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
+	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) < 1 {
+			cmd.Help()
+			os.Exit(0)
+		}
+
+		switch args[0] {
+		case "bash":
+			cmd.Root().GenBashCompletion(os.Stdout)
+		case "zsh":
+			cmd.Root().GenZshCompletion(os.Stdout)
+		case "fish":
+			cmd.Root().GenFishCompletion(os.Stdout, true)
+		case "powershell":
+			cmd.Root().GenPowerShellCompletion(os.Stdout)
+		}
+	},
+}
+
 // Command will create the `completion` commands
 func Command(rootCmd *cobra.Command) *cobra.Command {
-	var bashCompletionCmd = &cobra.Command{
-		Use:   "bash",
-		Short: "Generates bash completion scripts",
-		Long: `To load completion run
-
-source <(ops completion bash)
-
-To configure your bash shell to load completions for each session add to your bashrc
-
-# ~/.bashrc or ~/.profile
-source <(ops completion bash)
-
-If you are stuck on Bash 3 (macOS) use
-
-source /dev/stdin <<<"$(ops completion bash)"
-
-`,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return rootCmd.GenBashCompletion(os.Stdout)
-		},
-	}
-	var zshCompletionCmd = &cobra.Command{
-		Use:   "zsh",
-		Short: "Generates zsh completion scripts",
-		Long: `To configure your zsh shell, run:
-
-mkdir -p ~/.zsh/completion/
-ops completion zsh > ~/.zsh/completion/_ops
-
-and put the following in ~/.zshrc:
-
-fpath=($fpath ~/.zsh/completion)
-
-`,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return rootCmd.GenZshCompletion(os.Stdout)
-		},
-	}
-
-	cmd := &cobra.Command{
-		Use:   "completion",
-		Short: "Generates shell completion scripts",
-		Run: func(c *cobra.Command, _ []string) {
-			if err := c.Help(); err != nil {
-				logger.Debugf("ignoring error %q", err.Error())
-			}
-		},
-	}
-
-	cmd.AddCommand(bashCompletionCmd)
-	cmd.AddCommand(zshCompletionCmd)
-
-	return cmd
+	return completionCmd
 }
