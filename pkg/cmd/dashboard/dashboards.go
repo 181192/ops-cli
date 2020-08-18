@@ -30,7 +30,7 @@ func MakeDashboards() []Dashboard {
 		Name:          "jaeger",
 		Namespace:     "tracing",
 		Port:          16686,
-		LabelSelector: "app=jaeger",
+		LabelSelector: "app=jaeger,app.kubernetes.io/name=jaeger-operator-jaeger",
 	})
 
 	dashboards = append(dashboards, Dashboard{
