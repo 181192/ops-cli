@@ -59,7 +59,7 @@ type InstallOpts struct {
 // cluster and have it point to the specified Git repository.
 func AddCommonFlagsForFlux(fs *pflag.FlagSet, opts *InstallOpts) {
 	AddCommonFlagsForGit(fs, &opts.GitOptions)
-	AddCommonFlagsForKubernetes(fs, &opts.KubernetesOpts)
+	AddCommonFlagsForKubernetes(fs, &opts.KubernetesOpts, "flux-system")
 
 	fs.StringSliceVar(&opts.GitPaths, gitPaths, []string{},
 		"Relative paths within the Git repo for Flux to locate Kubernetes manifests")
