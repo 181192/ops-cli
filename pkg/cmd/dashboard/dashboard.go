@@ -28,7 +28,7 @@ func Command(flagGrouping *cmdutils.FlagGrouping) *cobra.Command {
 	helpTextLong := "Available dashboards:\n\n"
 
 	for _, d := range dashboards {
-		helpText += fmt.Sprintf("  - %s\n", d.Name)
+		helpTextLong += fmt.Sprintf("  - %s\n", d.Name)
 	}
 
 	dashboardCmd := &cobra.Command{
