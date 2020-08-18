@@ -39,6 +39,20 @@ $ ops completion fish | source
 
 # To load completions for each session, execute once:
 $ ops completion fish > ~/.config/fish/completions/ops.fish
+
+PowerShell:
+
+# Create a powershell profile (run as admin terminal)
+if (!(Test-Path -Path $PROFILE)) {
+	New-Item -ItemType File -Path $PROFILE -Force
+}
+
+# Open the profile.ps1
+notepad $PROFILE
+
+# And add the following
+Invoke-Expression -Command $(ops completion powershell | Out-String)
+
 `,
 	DisableFlagsInUseLine: true,
 	ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
