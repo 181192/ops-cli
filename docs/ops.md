@@ -15,7 +15,7 @@ A wrapper for multiple devops tools...
 
 ### SEE ALSO
 
-* [ops completion](ops_completion.md)	 - Generates shell completion scripts
+* [ops completion](ops_completion.md)	 - Generate completion script
 * [ops dashboard](ops_dashboard.md)	 - Dashboards  - alertmanager
   - grafana
   - jaeger

@@ -1,13 +1,43 @@
 ## ops completion
 
-Generates shell completion scripts
+Generate completion script
 
 ### Synopsis
 
-Generates shell completion scripts
+To load completions:
+
+Bash:
+
+$ source <(ops completion bash)
+
+# To load completions for each session, execute once:
+Linux:
+  $ ops completion bash > /etc/bash_completion.d/ops
+MacOS:
+  $ ops completion bash > /usr/local/etc/bash_completion.d/ops
+
+Zsh:
+
+# If shell completion is not already enabled in your environment you will need
+# to enable it.  You can execute the following once:
+
+$ echo "autoload -U compinit; compinit" >> ~/.zshrc
+
+# To load completions for each session, execute once:
+$ ops completion zsh > "${fpath[1]}/_ops"
+
+# You will need to start a new shell for this setup to take effect.
+
+Fish:
+
+$ ops completion fish | source
+
+# To load completions for each session, execute once:
+$ ops completion fish > ~/.config/fish/completions/ops.fish
+
 
 ```
-ops completion [flags]
+ops completion [bash|zsh|fish|powershell]
 ```
 
 ### Options
@@ -25,6 +55,4 @@ ops completion [flags]
 ### SEE ALSO
 
 * [ops](ops.md)	 - ops-cli is a wrapper for devops tools
-* [ops completion bash](ops_completion_bash.md)	 - Generates bash completion scripts
-* [ops completion zsh](ops_completion_zsh.md)	 - Generates zsh completion scripts
 
