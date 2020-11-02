@@ -36,9 +36,11 @@ func enableRepoCmd(cmd *cmdutils.Cmd) {
 	cmd.CobraCommand.Use = "repo"
 	cmd.CobraCommand.Short = "Set up a repo for gitops, installing Flux in the cluster and initializing its manifests"
 	cmd.CobraCommand.Long = ""
-	cmd.CobraCommand.RunE = func(_ *cobra.Command, args []string) error {
+	cmd.CobraCommand.Run = func(_ *cobra.Command, args []string) {
 		cmd.NameArg = cmdutils.GetNameArg(args)
-		return doEnableRepo(cmd, &opts)
+		if err := doEnableRepo(cmd, &opts); err != nil {
+			logger.Error(err)
+		}
 	}
 
 	cmd.FlagSetGroup.InFlagSet("Enable repo", func(fs *pflag.FlagSet) {
