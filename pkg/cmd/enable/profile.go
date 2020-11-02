@@ -34,9 +34,11 @@ func enableProfileCmd(cmd *cmdutils.Cmd) {
 	cmd.CobraCommand.Use = "profile"
 	cmd.CobraCommand.Short = "Enable and deploy the components from the selected profile"
 	cmd.CobraCommand.Long = ""
-	cmd.CobraCommand.RunE = func(_ *cobra.Command, args []string) error {
+	cmd.CobraCommand.Run = func(_ *cobra.Command, args []string) {
 		cmd.NameArg = cmdutils.GetNameArg(args)
-		return doEnableProfile(cmd, &opts)
+		if err := doEnableProfile(cmd, &opts); err != nil {
+			logger.Error(err)
+		}
 	}
 
 	cmd.FlagSetGroup.InFlagSet("Enable profile", func(fs *pflag.FlagSet) {
