@@ -2,6 +2,7 @@ package enable
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
@@ -19,6 +20,7 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 // ProfileOptions groups input for the "enable profile" command
@@ -56,6 +58,14 @@ func enableProfileCmd(cmd *cmdutils.Cmd) {
 }
 
 func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
+
+	if cmd.NameArg == "" && opts.profileOptions.Name == "" {
+		if defaultProfile := viper.GetString("profiles.default"); defaultProfile != "" {
+			logger.Info(fmt.Sprintf("Using default profile %s from config %s", defaultProfile, viper.ConfigFileUsed()))
+			opts.profileOptions.Name = defaultProfile
+		}
+	}
+
 	if cmd.NameArg != "" && opts.profileOptions.Name != "" {
 		return cmdutils.ErrFlagAndArg("--name", cmd.NameArg, opts.profileOptions.Name)
 	}
