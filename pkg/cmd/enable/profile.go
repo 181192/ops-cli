@@ -57,7 +57,7 @@ func enableProfileCmd(cmd *cmdutils.Cmd) {
 
 func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 	if cmd.NameArg != "" && opts.profileOptions.Name != "" {
-		return cmdutils.ErrClusterFlagAndArg(cmd, cmd.NameArg, opts.profileOptions.Name)
+		return cmdutils.ErrFlagAndArg("--name", cmd.NameArg, opts.profileOptions.Name)
 	}
 
 	if cmd.NameArg != "" {
@@ -97,10 +97,6 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 		return errors.Wrap(err, "please supply a valid profile name or URL")
 	}
 
-	if err := cmdutils.NewGitOpsConfigLoader(cmd).Load(); err != nil {
-		return err
-	}
-
 	logger.Debugf("%# v", pretty.Formatter(cmd))
 
 	// // Clone user's repo to apply profile
@@ -110,6 +106,7 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 	// }
 
 	usersRepoDir := "." + string(os.PathSeparator)
+	// usersRepoDir, err := ioutil.TempDir("", usersRepoName+"-")
 	logger.Debugf("Directory %s will be used to clone the configuration repository and install the profile %s", usersRepoDir, opts.profileOptions.Overlay)
 	profileOutputPath := "." + string(os.PathSeparator)
 
@@ -129,11 +126,15 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 	// 	return err
 	// }
 
+	if !opts.profileOptions.ManifestOnly {
+		if err := cmdutils.NewGitOpsConfigLoader(cmd).Load(); err != nil {
+			return err
+		}
+	}
+
 	profile := &gitops.Profile{
-		Processor: &fileprocessor.GoTemplateProcessor{
-			Params: fileprocessor.NewTemplateParameters(cmd.ClusterConfig),
-		},
-		Path: profileOutputPath,
+		Processor: getProcessor(opts.profileOptions.ManifestOnly, cmd.ClusterConfig),
+		Path:      profileOutputPath,
 		GitOpts: git.Options{
 			URL:    profileRepoURL,
 			Branch: opts.profileOptions.Revision,
@@ -150,12 +151,12 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 		return errors.Wrap(err, "error generating profile")
 	}
 
-	err = os.MkdirAll(cmd.ClusterConfig.Name+string(os.PathSeparator)+"plattform", 0755)
-	if err != nil {
-		return errors.Wrap(err, "error creating folder")
-	}
-
 	if !opts.profileOptions.ManifestOnly {
+		err = os.MkdirAll(cmd.ClusterConfig.Name+string(os.PathSeparator)+"plattform", 0755)
+		if err != nil {
+			return errors.Wrap(err, "error creating folder")
+		}
+
 		// TODO: Merge yamls with existing
 		logger.Debug("Copy files to profile")
 		err = file.CopyDirectory("profiles"+string(os.PathSeparator)+opts.profileOptions.Overlay, cmd.ClusterConfig.Name+string(os.PathSeparator)+"plattform")
@@ -187,4 +188,13 @@ func doEnableProfile(cmd *cmdutils.Cmd, opts *ProfileOptions) error {
 	// os.RemoveAll(usersRepoDir)
 
 	return nil
+}
+
+func getProcessor(manifestOnly bool, clusterConfig *api.ClusterConfig) fileprocessor.FileProcessor {
+	if !manifestOnly {
+		return &fileprocessor.GoTemplateProcessor{
+			Params: fileprocessor.NewTemplateParameters(clusterConfig),
+		}
+	}
+	return &fileprocessor.NoOpTemplateProcessor{}
 }
