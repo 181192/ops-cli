@@ -29,10 +29,5 @@ ops dashboard kiali [flags]
 
 ### SEE ALSO
 
-* [ops dashboard](ops_dashboard.md)	 - Dashboards  - alertmanager
-  - grafana
-  - jaeger
-  - kiali
-  - prometheus
-
+* [ops dashboard](ops_dashboard.md)	 - Dashboards
 

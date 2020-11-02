@@ -25,9 +25,9 @@ ops enable profile [flags]
       --load-balacer-ip-rg string         Loadbalancer IP resource group
   -l, --location string                   Cluster location (default "westeurope")
       --manifest-only                     Only update manifests directory, ignore profile.
-      --name string                       Name or URL of the Quick Start profile. For example, app-dev.
+      --name string                       Name or URL of the profile. For example, app-dev.
       --overlay string                    Name of the overlay profile. For example nginx,linkerd or istio. (default "nginx")
-      --revision string                   Revision of the Quick Start profile. (default "master")
+      --revision string                   Revision of the profile. (default "master")
 ```
 
 ### Options inherited from parent commands

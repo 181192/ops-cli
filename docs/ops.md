@@ -16,12 +16,7 @@ A wrapper for multiple devops tools...
 ### SEE ALSO
 
 * [ops completion](ops_completion.md)	 - Generate completion script
-* [ops dashboard](ops_dashboard.md)	 - Dashboards  - alertmanager
-  - grafana
-  - jaeger
-  - kiali
-  - prometheus
-
+* [ops dashboard](ops_dashboard.md)	 - Dashboards
 * [ops download](ops_download.md)	 - Downloads all required binaries to use the ops-cli
 * [ops enable](ops_enable.md)	 - Enable resource(s)
 * [ops generate](ops_generate.md)	 - Generate resource(s)

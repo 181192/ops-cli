@@ -1,16 +1,16 @@
 ## ops dashboard
 
-Dashboards  - alertmanager
-  - grafana
-  - jaeger
-  - kiali
-  - prometheus
-
+Dashboards
 
 ### Synopsis
 
 Available dashboards:
 
+  - alertmanager
+  - grafana
+  - jaeger
+  - kiali
+  - prometheus
 
 
 ### Options
