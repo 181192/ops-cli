@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-// Options holds options to configure the source of a Quick Start profile.
+// Options holds options to configure the source of a profile.
 type Options struct {
 	Name         string
 	Overlay      string
@@ -15,7 +15,7 @@ type Options struct {
 // Validate validates this Options object.
 func (o Options) Validate() error {
 	if o.Name == "" {
-		return errors.New("please supply a valid Quick Start profile name or URL")
+		return errors.New("please supply a valid profile name or URL")
 	}
 	return nil
 }

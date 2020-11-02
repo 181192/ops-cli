@@ -116,12 +116,11 @@ func ValidateGitOptions(opts *git.Options) error {
 	return nil
 }
 
-// AddCommonFlagsForProfile configures the flags required to enable a Quick
-// Start profile.
+// AddCommonFlagsForProfile configures the flags required to enable a profile.
 func AddCommonFlagsForProfile(fs *pflag.FlagSet, opts *profile.Options) {
-	fs.StringVar(&opts.Name, profileName, "", "Name or URL of the Quick Start profile. For example, app-dev.")
+	fs.StringVar(&opts.Name, profileName, "", "Name or URL of the profile. For example, app-dev.")
 	fs.StringVar(&opts.Overlay, profileOverlay, "nginx", "Name of the overlay profile. For example nginx,linkerd or istio.")
-	fs.StringVar(&opts.Revision, profileRevision, "master", "Revision of the Quick Start profile.")
+	fs.StringVar(&opts.Revision, profileRevision, "master", "Revision of the profile.")
 	fs.BoolVar(&opts.ManifestOnly, manifestOnly, false, "Only update manifests directory, ignore profile.")
 }
 

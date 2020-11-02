@@ -40,7 +40,7 @@ var _ = Describe("profile", func() {
 		It("returns an error otherwise", func() {
 			url, err := profile.RepositoryURL("foo")
 			Expect(err).To(HaveOccurred())
-			Expect(err.Error()).To(Equal("invalid URL or unknown Quick Start profile: foo"))
+			Expect(err.Error()).To(Equal("invalid URL or unknown profile: foo"))
 			Expect(url).To(Equal(""))
 		})
 	})
