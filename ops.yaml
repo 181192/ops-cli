@@ -1,0 +1,9 @@
+# profiles:
+#   default: git@bitbucket.org:181192/kustomize-manifests.git
+#   example: git@bitbucket.org:181192/some-other-manifests.git
+
+# dashboards:
+#   - name: "podinfo"
+#     namespace: "default"
+#     port: 9898
+#     labelSelector: "app=podinfo"
