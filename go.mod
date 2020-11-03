@@ -23,6 +23,7 @@ require (
 	github.com/tidwall/gjson v1.6.0
 	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
 	golang.org/x/sys v0.0.0-20191022100944-742c48ecaeb7
+	gopkg.in/yaml.v2 v2.2.8
 	helm.sh/helm/v3 v3.2.1
 	k8s.io/api v0.18.0
 	k8s.io/apimachinery v0.18.0

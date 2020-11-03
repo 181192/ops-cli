@@ -7,13 +7,14 @@ import (
 
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
 	"github.com/181192/ops-cli/pkg/cmd/completion"
+	"github.com/181192/ops-cli/pkg/cmd/config"
 	"github.com/181192/ops-cli/pkg/cmd/dashboard"
 	"github.com/181192/ops-cli/pkg/cmd/download"
 	"github.com/181192/ops-cli/pkg/cmd/enable"
 	"github.com/181192/ops-cli/pkg/cmd/generate"
 	"github.com/181192/ops-cli/pkg/cmd/update"
 	"github.com/181192/ops-cli/pkg/cmd/wrapper"
-	"github.com/181192/ops-cli/pkg/config"
+	cliConfig "github.com/181192/ops-cli/pkg/config"
 
 	logger "github.com/sirupsen/logrus"
 
@@ -47,7 +48,7 @@ func Execute() {
 func init() {
 	cobra.EnableCommandSorting = false
 	flagGrouping := cmdutils.NewGrouping()
-	cobra.OnInitialize(config.InitConfig)
+	cobra.OnInitialize(cliConfig.InitConfig)
 	rootCmd.AddCommand(dashboard.Command(flagGrouping))
 	rootCmd.AddCommand(generate.Command(flagGrouping))
 	rootCmd.AddCommand(enable.Command(flagGrouping))
@@ -55,6 +56,7 @@ func init() {
 	rootCmd.AddCommand(download.Command(flagGrouping))
 	rootCmd.AddCommand(update.Command())
 	rootCmd.AddCommand(completion.Command(rootCmd))
+	rootCmd.AddCommand(config.Command(flagGrouping))
 
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		if err := setUpLogs(os.Stdout, loglevel); err != nil {
@@ -64,7 +66,7 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVar(&loglevel, "log-level", logger.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic)")
-	rootCmd.PersistentFlags().StringVar(&config.CfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cliConfig.CfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
 	rootCmd.PersistentFlags().MarkHidden("config")
 
 	rootCmd.SetUsageFunc(flagGrouping.Usage)
