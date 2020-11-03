@@ -39,7 +39,7 @@ func enableRepoCmd(cmd *cmdutils.Cmd) {
 	cmd.CobraCommand.Run = func(_ *cobra.Command, args []string) {
 		cmd.NameArg = cmdutils.GetNameArg(args)
 		if err := doEnableRepo(cmd, &opts); err != nil {
-			logger.Error(err)
+			logger.Fatal(err)
 		}
 	}
 
