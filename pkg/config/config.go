@@ -23,8 +23,10 @@ func InitConfig() {
 			os.Mkdir(util.GetConfigDirectory(), os.ModePerm)
 		}
 
-		viper.AddConfigPath(cfgDir)
 		viper.SetConfigName("ops")
+
+		viper.AddConfigPath(".")
+		viper.AddConfigPath(cfgDir)
 	}
 
 	// read in environment variables that match
