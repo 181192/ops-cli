@@ -13,15 +13,13 @@ import (
 	"github.com/181192/ops-cli/pkg/cmd/generate"
 	"github.com/181192/ops-cli/pkg/cmd/update"
 	"github.com/181192/ops-cli/pkg/cmd/wrapper"
-	"github.com/181192/ops-cli/pkg/util"
+	"github.com/181192/ops-cli/pkg/config"
 
 	logger "github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-var cfgFile string
 var loglevel string
 
 // rootCmd represents the base command when called without any subcommands
@@ -49,7 +47,7 @@ func Execute() {
 func init() {
 	cobra.EnableCommandSorting = false
 	flagGrouping := cmdutils.NewGrouping()
-
+	cobra.OnInitialize(config.InitConfig)
 	rootCmd.AddCommand(dashboard.Command(flagGrouping))
 	rootCmd.AddCommand(generate.Command(flagGrouping))
 	rootCmd.AddCommand(enable.Command(flagGrouping))
@@ -66,36 +64,11 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVar(&loglevel, "log-level", logger.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic)")
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
+	rootCmd.PersistentFlags().StringVar(&config.CfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
 	rootCmd.PersistentFlags().MarkHidden("config")
 
-	cobra.OnInitialize(initConfig)
 	rootCmd.SetUsageFunc(flagGrouping.Usage)
 
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-
-		cfgDir := util.GetConfigDirectory()
-
-		if _, err := os.Stat(cfgDir); os.IsNotExist(err) {
-			os.Mkdir(util.GetConfigDirectory(), os.ModePerm)
-		}
-
-		viper.AddConfigPath(cfgDir)
-		viper.SetConfigName("ops")
-	}
-
-	// read in environment variables that match
-	viper.AutomaticEnv()
-
-	// If a config file is found, read it in.
-	viper.ReadInConfig()
 }
 
 func setUpLogs(out io.Writer, level string) error {
