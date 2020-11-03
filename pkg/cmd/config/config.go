@@ -15,6 +15,7 @@ var configCmd = &cobra.Command{
 // Command will create the `config` commands
 func Command(flagGrouping *cmdutils.FlagGrouping) *cobra.Command {
 
+	cmdutils.AddResourceCmd(flagGrouping, configCmd, pathConfigCmd)
 	cmdutils.AddResourceCmd(flagGrouping, configCmd, showConfigCmd)
 	return configCmd
 }
