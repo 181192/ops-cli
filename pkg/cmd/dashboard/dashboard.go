@@ -19,6 +19,7 @@ type Options struct {
 	KubeOptions   cmdutils.KubernetesOpts
 	Port          int
 	LabelSelector string
+	URL           string
 }
 
 // Command will create the `dashboard` commands
@@ -63,6 +64,8 @@ func generateDashboardCommands(flagGrouping *cmdutils.FlagGrouping, dashboardCmd
 				fs.IntVarP(&opts.Port, "port", "p", 0, "Target port to forward to")
 				fs.StringVarP(&opts.LabelSelector, "label-selector", "l", "",
 					"Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)")
+				fs.StringVarP(&opts.URL, "url", "u", "",
+					"Relative URL to open (e.g. /metrics)")
 				cmdutils.AddCommonFlagsForKubernetes(fs, &opts.KubeOptions, dashboard.Namespace)
 			})
 		})
@@ -78,6 +81,7 @@ func doPortForward(cmd *cobra.Command, opts *Options, args []string, dashboard *
 	overrideNamespace := opts.KubeOptions.Namespace
 	overridePort := opts.Port
 	overrideLabelSelector := opts.LabelSelector
+	overrideURL := opts.URL
 
 	client, err := kubernetes.NewClient(kubeConfig, kubeContext)
 	if err != nil {
@@ -94,6 +98,10 @@ func doPortForward(cmd *cobra.Command, opts *Options, args []string, dashboard *
 
 	if overrideLabelSelector != "" {
 		dashboard.LabelSelector = overrideLabelSelector
+	}
+
+	if overrideURL != "" {
+		dashboard.URL = overrideURL
 	}
 
 	pl, err := client.PodsForSelector(dashboard.Namespace, dashboard.LabelSelector)
@@ -122,11 +130,11 @@ func doPortForward(cmd *cobra.Command, opts *Options, args []string, dashboard *
 
 	// only use the first pod in the list
 	return portForward(pod.Name, dashboard.Namespace, dashboard.Name,
-		"http://localhost:%d", dashboard.Port, client, cmd.OutOrStdout())
+		"http://localhost:%d%s", dashboard.Port, dashboard.URL, client, cmd.OutOrStdout())
 }
 
 // portForward first tries to forward localhost:remotePort to podName:remotePort, falls back to dynamic local port
-func portForward(podName, namespace, flavor, url string, remotePort int, client kubernetes.ExecClient, writer io.Writer) error {
+func portForward(podName, namespace, flavor, url string, remotePort int, urlSuffix string, client kubernetes.ExecClient, writer io.Writer) error {
 	var err error
 	for _, localPort := range []int{remotePort, 0} {
 		fw, err := client.BuildPortForwarder(podName, namespace, localPort, remotePort)
@@ -136,8 +144,8 @@ func portForward(podName, namespace, flavor, url string, remotePort int, client 
 
 		if err = kubernetes.RunPortForwarder(fw, func(fw *kubernetes.PortForward) error {
 			logger.Infof("port-forward to %s pod in %s namespace ready\n", flavor, namespace)
-			logger.Infof(fmt.Sprintf(url, fw.LocalPort))
-			open.Start(fmt.Sprintf(url, fw.LocalPort))
+			logger.Infof(fmt.Sprintf(url, fw.LocalPort, urlSuffix))
+			open.Start(fmt.Sprintf(url, fw.LocalPort, urlSuffix))
 			return nil
 		}); err == nil {
 			return nil

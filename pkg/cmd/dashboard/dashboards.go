@@ -12,6 +12,7 @@ type Dashboard struct {
 	Namespace     string `json:"namespace"`
 	Port          int    `json:"port"`
 	LabelSelector string `json:"labelSelector"`
+	URL           string `json:"url,omitempty"`
 }
 
 // MakeDashboards returns list of all dashboards
