@@ -52,7 +52,7 @@ func init() {
 	rootCmd.AddCommand(dashboard.Command(flagGrouping))
 	rootCmd.AddCommand(generate.Command(flagGrouping))
 	rootCmd.AddCommand(enable.Command(flagGrouping))
-	rootCmd.AddCommand(wrapper.Command())
+	rootCmd.AddCommand(wrapper.Command(flagGrouping))
 	rootCmd.AddCommand(download.Command(flagGrouping))
 	rootCmd.AddCommand(update.Command())
 	rootCmd.AddCommand(completion.Command(rootCmd))
