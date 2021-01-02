@@ -63,6 +63,7 @@ ops completion [bash|zsh|fish|powershell]
 ### Options inherited from parent commands
 
 ```
+      --config string      Config file (default is /home/k/.ops/ops.[yaml|json|toml|properties])
       --log-level string   Log level (debug, info, warn, error, fatal, panic) (default "info")
 ```
 

@@ -9,6 +9,7 @@ A wrapper for multiple devops tools...
 ### Options
 
 ```
+      --config string      Config file (default is /home/k/.ops/ops.[yaml|json|toml|properties])
   -h, --help               help for ops
       --log-level string   Log level (debug, info, warn, error, fatal, panic) (default "info")
 ```

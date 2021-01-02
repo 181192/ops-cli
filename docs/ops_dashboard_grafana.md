@@ -19,11 +19,13 @@ ops dashboard grafana [flags]
   -l, --label-selector string   Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)
   -n, --namespace string        Name of the namespace to use. Defaults to the application default namespace. (default "monitoring")
   -p, --port int                Target port to forward to
+  -u, --url string              Relative URL to open (e.g. /metrics)
 ```
 
 ### Options inherited from parent commands
 
 ```
+      --config string      Config file (default is /home/k/.ops/ops.[yaml|json|toml|properties])
       --log-level string   Log level (debug, info, warn, error, fatal, panic) (default "info")
 ```
 

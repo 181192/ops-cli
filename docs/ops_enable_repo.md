@@ -15,7 +15,7 @@ ops enable repo [flags]
 ```
       --acr-registry                         Enable ACR authentication (requires deployment in AKS) (default true)
   -c, --cluster string                       Cluster name
-  -f, --config-file string                   load configuration from a file (or stdin if set to '-')
+  -f, --config-file string                   Load configuration from a file (or stdin if set to '-')
       --flux-chart-version string            Chart version of Flux (default latest)
       --garbage-collection                   Enable garbage collection (default true)
       --git-branch string                    Git branch to be used for GitOps (default "master")
@@ -42,6 +42,7 @@ ops enable repo [flags]
 ### Options inherited from parent commands
 
 ```
+      --config string      Config file (default is /home/k/.ops/ops.[yaml|json|toml|properties])
       --log-level string   Log level (debug, info, warn, error, fatal, panic) (default "info")
 ```
 
