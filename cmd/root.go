@@ -66,8 +66,7 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVar(&loglevel, "log-level", logger.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic)")
-	rootCmd.PersistentFlags().StringVar(&cliConfig.CfgFile, "config", "", "config file (default is $HOME/.ops/ops.yaml)")
-	rootCmd.PersistentFlags().MarkHidden("config")
+	rootCmd.PersistentFlags().StringVar(&cliConfig.CfgFile, "config", "", fmt.Sprintf("Config file (default is %s/%s.[yaml|json|toml|properties])", cliConfig.GetConfigDirectory(), cliConfig.CfgName))
 
 	rootCmd.SetUsageFunc(flagGrouping.Usage)
 

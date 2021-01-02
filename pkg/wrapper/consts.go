@@ -3,6 +3,7 @@ package wrapper
 import (
 	"os"
 
+	"github.com/181192/ops-cli/pkg/config"
 	"github.com/181192/ops-cli/pkg/util"
 )
 
@@ -21,5 +22,5 @@ var (
 )
 
 func getBinaryPath(binary string) string {
-	return util.GetConfigDirectory() + string(os.PathSeparator) + "bin" + string(os.PathSeparator) + binary + util.GetWinExtension()
+	return config.GetConfigDirectory() + string(os.PathSeparator) + "bin" + string(os.PathSeparator) + binary + util.GetWinExtension()
 }
