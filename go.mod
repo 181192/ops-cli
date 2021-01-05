@@ -37,4 +37,7 @@ replace github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503
 
 replace k8s.io/kubectl => k8s.io/kubectl v0.18.0
 
+replace github.com/Azure/go-autorest/autorest => github.com/Azure/go-autorest/autorest v0.11.15
+replace github.com/Azure/go-autorest/autorest/adal => github.com/Azure/go-autorest/autorest/adal v0.9.10
+
 replace github.com/181192/ops-cli/pkg/flux => ./pkg/flux
