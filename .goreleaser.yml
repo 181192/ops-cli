@@ -59,7 +59,6 @@ dockers:
     image_templates:
       - "ghcr.io/181192/ops-cli:{{ .Version }}-arm64"
     use_buildx: true
-    skip_push: true
     build_flag_templates:
       - --platform=linux/arm64
       - --pull
