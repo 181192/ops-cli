@@ -1,5 +1,5 @@
 FROM scratch
 
-COPY dist/ops_cli_linux_amd64/ops_cli_linux_amd64 /ops-cli
+COPY ops /
 
-ENTRYPOINT ["/ops-cli"]
+ENTRYPOINT ["/ops"]

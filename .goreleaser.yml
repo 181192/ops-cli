@@ -29,17 +29,14 @@ builds:
         goarch: arm64
       - goos: windows
         goarch: arm
-    binary: ops_cli_{{ .Os }}_{{ .Arch }}
+    binary: ops
     ldflags:
       - -s -w -X github.com/181192/ops-cli/pkg/util/version.Version={{.Version}} -X github.com/181192/ops-cli/pkg/util/version.GitCommit={{.Commit}}
-archives:
-  - format: binary
-
 dockers:
   - goos: linux
     goarch: amd64
     ids:
-      - ops_cli
+      - ops
     image_templates:
       - "ghcr.io/181192/ops-cli:latest"
       - "ghcr.io/181192/ops-cli:{{ .Version }}"
@@ -59,7 +56,7 @@ dockers:
   - goos: linux
     goarch: arm64
     ids:
-      - ops_cli
+      - ops
     image_templates:
       - "ghcr.io/181192/ops-cli:latest"
       - "ghcr.io/181192/ops-cli:{{ .Version }}"
