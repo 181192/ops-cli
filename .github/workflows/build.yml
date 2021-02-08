@@ -54,14 +54,13 @@ jobs:
 
       - name: Build
         uses: goreleaser/goreleaser-action@master
-        if: startsWith(github.ref, 'refs/tags/v')
         with:
           version: latest
           args: build --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GO_RELEASER_GITHUB_TOKEN }}
 
-      - name: Build
+      - name: Release
         uses: goreleaser/goreleaser-action@master
         if: startsWith(github.ref, 'refs/tags/v')
         with:
@@ -69,12 +68,3 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GO_RELEASER_GITHUB_TOKEN }}
-
-      - name: Upload the artifacts
-        uses: skx/github-action-publish-binaries@master
-        if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          version: latest
-          args: "dist/**/ops_cli_*"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
