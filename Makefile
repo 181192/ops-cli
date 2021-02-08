@@ -1,5 +1,7 @@
 .PHONY: clean clean-deps build deps run test-build docs test
 
+all: clean deps generate-cleanup generate docs test build
+
 clean-deps:
 	go mod tidy
 
