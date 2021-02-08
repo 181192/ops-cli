@@ -1,14 +1,10 @@
 ## ops wrapper helmfile
 
-Deploy Kubernetes Helm Charts
+
 
 ### Synopsis
 
-Helmfile is a declarative spec for deploying helm charts. It lets you...
 
-	- Keep a directory of chart value files and maintain changes in version control.
-	- Apply CI/CD to configuration changes.
-	- Periodically sync to avoid skew in environments.
 
 ```
 ops wrapper helmfile [flags]
@@ -29,5 +25,5 @@ ops wrapper helmfile [flags]
 
 ### SEE ALSO
 
-* [ops wrapper](ops_wrapper.md)	 - 
+* [ops wrapper](ops_wrapper.md)	 - Wrapper commands
 

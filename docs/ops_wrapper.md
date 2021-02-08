@@ -1,9 +1,15 @@
 ## ops wrapper
 
-
+Wrapper commands
 
 ### Synopsis
 
+Available wrapper commands:
+
+  - helm	A kubernetes package manager
+  - helmfile	Deploy Kubernetes Helm Charts
+  - kubectl	kubectl controls the Kubernetes cluster manager
+  - terraform	Terraform IaC tool
 
 
 ### Options
@@ -22,8 +28,8 @@
 ### SEE ALSO
 
 * [ops](ops.md)	 - ops-cli is a wrapper for devops tools
-* [ops wrapper helm](ops_wrapper_helm.md)	 - A kubernetes package manager
-* [ops wrapper helmfile](ops_wrapper_helmfile.md)	 - Deploy Kubernetes Helm Charts
-* [ops wrapper kubectl](ops_wrapper_kubectl.md)	 - kubectl controls the Kubernetes cluster manager
-* [ops wrapper terraform](ops_wrapper_terraform.md)	 - Terraform IaC tool
+* [ops wrapper helm](ops_wrapper_helm.md)	 - 
+* [ops wrapper helmfile](ops_wrapper_helmfile.md)	 - 
+* [ops wrapper kubectl](ops_wrapper_kubectl.md)	 - 
+* [ops wrapper terraform](ops_wrapper_terraform.md)	 - 
 

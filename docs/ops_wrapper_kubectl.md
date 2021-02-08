@@ -1,10 +1,10 @@
 ## ops wrapper kubectl
 
-kubectl controls the Kubernetes cluster manager
+
 
 ### Synopsis
 
-kubectl controls the Kubernetes cluster manager.
+
 
 ```
 ops wrapper kubectl [flags]
@@ -25,5 +25,5 @@ ops wrapper kubectl [flags]
 
 ### SEE ALSO
 
-* [ops wrapper](ops_wrapper.md)	 - 
+* [ops wrapper](ops_wrapper.md)	 - Wrapper commands
 

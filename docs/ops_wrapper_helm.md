@@ -1,10 +1,10 @@
 ## ops wrapper helm
 
-A kubernetes package manager
+
 
 ### Synopsis
 
-A kubernetes package manager.
+
 
 ```
 ops wrapper helm [flags]
@@ -25,5 +25,5 @@ ops wrapper helm [flags]
 
 ### SEE ALSO
 
-* [ops wrapper](ops_wrapper.md)	 - 
+* [ops wrapper](ops_wrapper.md)	 - Wrapper commands
 

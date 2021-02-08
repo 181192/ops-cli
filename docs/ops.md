@@ -24,5 +24,5 @@ A wrapper for multiple devops tools...
 * [ops generate](ops_generate.md)	 - Generate resource(s)
 * [ops update](ops_update.md)	 - Update ops-cli to latest version
 * [ops version](ops_version.md)	 - Output the version
-* [ops wrapper](ops_wrapper.md)	 - 
+* [ops wrapper](ops_wrapper.md)	 - Wrapper commands
 

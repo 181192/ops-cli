@@ -1,10 +1,10 @@
 ## ops wrapper terraform
 
-Terraform IaC tool
+
 
 ### Synopsis
 
-Terraform IaC tool.
+
 
 ```
 ops wrapper terraform [flags]
@@ -25,5 +25,5 @@ ops wrapper terraform [flags]
 
 ### SEE ALSO
 
-* [ops wrapper](ops_wrapper.md)	 - 
+* [ops wrapper](ops_wrapper.md)	 - Wrapper commands
 
