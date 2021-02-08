@@ -38,8 +38,7 @@ dockers:
     ids:
       - ops
     image_templates:
-      - "ghcr.io/181192/ops-cli:latest"
-      - "ghcr.io/181192/ops-cli:{{ .Version }}"
+      - "ghcr.io/181192/ops-cli:{{ .Version }}-amd64"
     use_buildx: true
     skip_push: true
     build_flag_templates:
@@ -58,8 +57,7 @@ dockers:
     ids:
       - ops
     image_templates:
-      - "ghcr.io/181192/ops-cli:latest"
-      - "ghcr.io/181192/ops-cli:{{ .Version }}"
+      - "ghcr.io/181192/ops-cli:{{ .Version }}-arm64"
     use_buildx: true
     skip_push: true
     build_flag_templates:
@@ -76,6 +74,10 @@ dockers:
 
 docker_manifests:
 - name_template: ghcr.io/181192/ops-cli:{{ .Version }}
+  image_templates:
+  - ghcr.io/181192/ops-cli:{{ .Version }}-amd64
+  - ghcr.io/181192/ops-cli:{{ .Version }}-arm64
+- name_template: ghcr.io/181192/ops-cli:latest
   image_templates:
   - ghcr.io/181192/ops-cli:{{ .Version }}-amd64
   - ghcr.io/181192/ops-cli:{{ .Version }}-arm64
