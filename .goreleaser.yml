@@ -9,7 +9,7 @@ changelog:
       - "^docs:"
       - "^test:"
 builds:
-  - id: ops_cli
+  - id: ops
     env:
       - CGO_ENABLED=0
     goos:
