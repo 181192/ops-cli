@@ -52,14 +52,6 @@ jobs:
           CI: true
         run: make test
 
-      - name: Build
-        uses: goreleaser/goreleaser-action@master
-        with:
-          version: latest
-          args: build --rm-dist --snapshot
-        env:
-          GITHUB_TOKEN: ${{ secrets.GO_RELEASER_GITHUB_TOKEN }}
-
       - name: Release
         uses: goreleaser/goreleaser-action@master
         if: startsWith(github.ref, 'refs/tags/v')
