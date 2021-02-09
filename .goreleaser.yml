@@ -32,6 +32,9 @@ builds:
     binary: ops
     ldflags:
       - -s -w -X github.com/181192/ops-cli/pkg/util/version.Version={{.Version}} -X github.com/181192/ops-cli/pkg/util/version.GitCommit={{.Commit}}
+archives:
+  - name_template: "ops_cli_{{ .Os }}_{{ .Arch }}"
+    format: binary
 dockers:
   - goos: linux
     goarch: amd64
@@ -71,11 +74,11 @@ dockers:
       - --label=org.opencontainers.image.licenses=MIT
 
 docker_manifests:
-- name_template: ghcr.io/181192/ops-cli:{{ .Version }}
-  image_templates:
-  - ghcr.io/181192/ops-cli:{{ .Version }}-amd64
-  - ghcr.io/181192/ops-cli:{{ .Version }}-arm64
-- name_template: ghcr.io/181192/ops-cli:latest
-  image_templates:
-  - ghcr.io/181192/ops-cli:{{ .Version }}-amd64
-  - ghcr.io/181192/ops-cli:{{ .Version }}-arm64
+  - name_template: ghcr.io/181192/ops-cli:{{ .Version }}
+    image_templates:
+      - ghcr.io/181192/ops-cli:{{ .Version }}-amd64
+      - ghcr.io/181192/ops-cli:{{ .Version }}-arm64
+  - name_template: ghcr.io/181192/ops-cli:latest
+    image_templates:
+      - ghcr.io/181192/ops-cli:{{ .Version }}-amd64
+      - ghcr.io/181192/ops-cli:{{ .Version }}-arm64
