@@ -16,9 +16,8 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
-
-      - name: Fetch all tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+        with:
+          fetch-depth: 50
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
