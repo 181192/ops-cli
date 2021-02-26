@@ -58,7 +58,7 @@ func (client *Client) BuildPortForwarder(podName string, ns string, localPort in
 
 	stop := make(chan struct{})
 	ready := make(chan struct{})
-	fw, err := portforward.New(dialer, []string{fmt.Sprintf("%d:%d", localPort, podPort)}, stop, ready, ioutil.Discard, os.Stderr)
+	fw, err := portforward.New(dialer, []string{fmt.Sprintf("%d:%d", localPort, podPort)}, stop, ready, ioutil.Discard, ioutil.Discard)
 	if err != nil {
 		return nil, fmt.Errorf("failed establishing port-forward: %v", err)
 	}
