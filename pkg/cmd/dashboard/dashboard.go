@@ -143,7 +143,7 @@ func portForward(podName, namespace, flavor, url string, remotePort int, urlSuff
 		}
 
 		if err = kubernetes.RunPortForwarder(fw, func(fw *kubernetes.PortForward) error {
-			logger.Infof("port-forward to %s pod in %s namespace ready\n", flavor, namespace)
+			logger.Infof("port-forward to %s pod in %s namespace ready", flavor, namespace)
 			logger.Infof(fmt.Sprintf(url, fw.LocalPort, urlSuffix))
 			open.Start(fmt.Sprintf(url, fw.LocalPort, urlSuffix))
 			return nil
