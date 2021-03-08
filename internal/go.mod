@@ -1,4 +1,4 @@
-module github.com/181192/ops-cli/pkg/flux
+module github.com/181192/ops-cli/internal
 
 go 1.15
 
