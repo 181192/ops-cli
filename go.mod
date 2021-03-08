@@ -3,7 +3,7 @@ module github.com/181192/ops-cli
 go 1.15
 
 require (
-	github.com/181192/ops-cli/internal v0.1.15
+	github.com/181192/ops-cli/internal v0.1.16
 	github.com/cheggaaa/pb v1.0.27
 	github.com/gofrs/flock v0.7.1
 	github.com/hashicorp/go-getter v1.4.1
@@ -40,3 +40,5 @@ replace k8s.io/kubectl => k8s.io/kubectl v0.18.0
 replace github.com/Azure/go-autorest/autorest => github.com/Azure/go-autorest/autorest v0.11.15
 
 replace github.com/Azure/go-autorest/autorest/adal => github.com/Azure/go-autorest/autorest/adal v0.9.10
+
+replace github.com/181192/ops-cli/internal => ./internal
