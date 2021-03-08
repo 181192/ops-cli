@@ -50,6 +50,79 @@ ops enable profile \
   -f cluster-config.yaml
 ```
 
+## Configuration file
+
+Create a `ops.yaml` file in `$HOME/.ops` or current directory
+
+### Custom dashboards
+
+Example config:
+
+```yaml
+dashboards:
+  - name: cadvisor
+    namespace: cadvisor
+    port: 8080
+    labelSelector: app=cadvisor
+    url: /metrics
+```
+
+Will open the browser at http://localhost:8080/metrics
+
+Can also override url og provive a url if not set in config with:
+
+```
+ops dashboard grafana --url /explore
+
+# or
+ops d grafana -u /explore
+```
+
+OR set default grafana url to always be /explore by overriding config
+
+```yaml
+dashboards:
+  - name: grafana
+    namespace: monitoring
+    port: 3000
+    labelSelector: app.kubernetes.io/name=grafana
+    url: /explore
+```
+
+## Default profiles
+
+Adding profiles configuration to the config file makes it easier to use ops-cli when updating a repo.
+
+```yaml
+profiles:
+  default: git@github.com:181192/kustomize-manifests.git
+  example: git@github.com:181192/some-other-manifests.git
+```
+
+The ops enable profile command simplifies from:
+
+```
+ops enable profile git@github.com:181192/kustomize-manifests.git --manifest-only
+
+# or
+ops enable profile --name git@github.com:181192/kustomize-manifests.git --manifest-only
+```
+
+To using the default profile:
+
+```
+ops enable profile --manifest-only
+```
+
+Or using the example profile:
+
+```
+ops enable profile example --manifest-only
+
+# or
+ops enable profile --name example --manifest-only
+```
+
 ## Building from sources
 
 Building the project
