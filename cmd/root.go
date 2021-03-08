@@ -49,6 +49,7 @@ func Execute() {
 func init() {
 	cobra.EnableCommandSorting = false
 	flagGrouping := cmdutils.NewGrouping()
+	cliConfig.SetConfigName("ops")
 	cobra.OnInitialize(cliConfig.InitConfig)
 	rootCmd.AddCommand(dashboard.Command(flagGrouping))
 	rootCmd.AddCommand(generate.Command(flagGrouping))
@@ -68,7 +69,7 @@ func init() {
 	}
 
 	rootCmd.PersistentFlags().StringVar(&loglevel, "log-level", logger.InfoLevel.String(), "Log level (debug, info, warn, error, fatal, panic)")
-	rootCmd.PersistentFlags().StringVar(&cliConfig.CfgFile, "config", "", fmt.Sprintf("Config file (default is %s/%s.[yaml|json|toml|properties])", cliConfig.GetConfigDirectory(), cliConfig.CfgName))
+	rootCmd.PersistentFlags().StringVar(&cliConfig.GetConfig().CfgFile, "config", "", fmt.Sprintf("Config file (default is %s/%s.[yaml|json|toml|properties])", cliConfig.GetConfigDirectory(), cliConfig.GetConfig().CfgName))
 
 	rootCmd.SetUsageFunc(flagGrouping.Usage)
 
