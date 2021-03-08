@@ -6,9 +6,9 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/181192/ops-cli/internal/flux"
 	api "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
 	"github.com/181192/ops-cli/pkg/cmd/cmdutils"
-	"github.com/181192/ops-cli/pkg/flux"
 	scheme "github.com/181192/ops-cli/pkg/generated/clientset/versioned/scheme"
 	"github.com/181192/ops-cli/pkg/git/gitconfig"
 	"github.com/181192/ops-cli/pkg/helm"
