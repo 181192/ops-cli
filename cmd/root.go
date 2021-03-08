@@ -13,6 +13,7 @@ import (
 	"github.com/181192/ops-cli/pkg/cmd/enable"
 	"github.com/181192/ops-cli/pkg/cmd/generate"
 	"github.com/181192/ops-cli/pkg/cmd/update"
+	"github.com/181192/ops-cli/pkg/cmd/version"
 	"github.com/181192/ops-cli/pkg/cmd/wrapper"
 	cliConfig "github.com/181192/ops-cli/pkg/config"
 
@@ -57,6 +58,7 @@ func init() {
 	rootCmd.AddCommand(update.Command())
 	rootCmd.AddCommand(completion.Command(rootCmd))
 	rootCmd.AddCommand(config.Command(flagGrouping))
+	rootCmd.AddCommand(version.Command(flagGrouping))
 
 	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		if err := setUpLogs(os.Stdout, loglevel); err != nil {
