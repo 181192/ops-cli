@@ -1,4 +1,4 @@
-FROM alpine:3.14.0 as deps
+FROM alpine:3.15.2 as deps
 RUN apk --update add ca-certificates
 RUN mkdir tmp-dir
 
