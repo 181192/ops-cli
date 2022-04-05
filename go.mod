@@ -8,7 +8,7 @@ require (
 	github.com/gofrs/flock v0.8.1
 	github.com/hashicorp/go-getter v1.4.1
 	github.com/hashicorp/go-version v1.4.0
-	github.com/kr/pretty v0.2.0
+	github.com/kr/pretty v0.3.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.10.1
