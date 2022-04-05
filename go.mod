@@ -14,7 +14,7 @@ require (
 	github.com/onsi/gomega v1.8.1
 	github.com/pkg/errors v0.9.1
 	github.com/rancher/wrangler v0.6.1
-	github.com/sirupsen/logrus v1.4.2
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/afero v1.2.2
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
@@ -22,7 +22,7 @@ require (
 	github.com/stretchr/testify v1.7.1
 	github.com/tidwall/gjson v1.6.0
 	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
-	golang.org/x/sys v0.0.0-20191022100944-742c48ecaeb7
+	golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
 	gopkg.in/yaml.v2 v2.2.8
 	helm.sh/helm/v3 v3.2.1
 	k8s.io/api v0.18.0
