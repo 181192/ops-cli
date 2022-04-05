@@ -10,8 +10,8 @@ require (
 	github.com/hashicorp/go-version v1.4.0
 	github.com/kr/pretty v0.2.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/onsi/ginkgo v1.11.0
-	github.com/onsi/gomega v1.8.1
+	github.com/onsi/ginkgo v1.16.5
+	github.com/onsi/gomega v1.10.1
 	github.com/pkg/errors v0.9.1
 	github.com/rancher/wrangler v0.6.1
 	github.com/sirupsen/logrus v1.8.1
@@ -22,8 +22,8 @@ require (
 	github.com/stretchr/testify v1.7.1
 	github.com/tidwall/gjson v1.6.0
 	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
-	golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
-	gopkg.in/yaml.v2 v2.2.8
+	golang.org/x/sys v0.0.0-20210112080510-489259a85091
+	gopkg.in/yaml.v2 v2.3.0
 	helm.sh/helm/v3 v3.2.1
 	k8s.io/api v0.18.0
 	k8s.io/apimachinery v0.18.0
