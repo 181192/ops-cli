@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/181192/ops-cli/internal v0.1.16
-	github.com/cheggaaa/pb v2.0.7+incompatible
+	github.com/cheggaaa/pb v1.0.27
 	github.com/gofrs/flock v0.8.1
 	github.com/hashicorp/go-getter v1.4.1
 	github.com/hashicorp/go-version v1.4.0
@@ -23,12 +23,6 @@ require (
 	github.com/tidwall/gjson v1.6.0
 	github.com/whilp/git-urls v0.0.0-20191001220047-6db9661140c0
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1
-	gopkg.in/VividCortex/ewma.v1 v1.1.1 // indirect
-	gopkg.in/cheggaaa/pb.v2 v2.0.7 // indirect
-	gopkg.in/fatih/color.v1 v1.7.0 // indirect
-	gopkg.in/mattn/go-colorable.v0 v0.1.0 // indirect
-	gopkg.in/mattn/go-isatty.v0 v0.0.4 // indirect
-	gopkg.in/mattn/go-runewidth.v0 v0.0.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0
 	helm.sh/helm/v3 v3.2.1
 	k8s.io/api v0.18.0
