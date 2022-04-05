@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/181192/ops-cli/internal v0.1.16
 	github.com/cheggaaa/pb v1.0.27
-	github.com/gofrs/flock v0.7.1
+	github.com/gofrs/flock v0.8.1
 	github.com/hashicorp/go-getter v1.4.1
 	github.com/hashicorp/go-version v1.4.0
 	github.com/kr/pretty v0.2.0
