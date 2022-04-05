@@ -7,7 +7,7 @@ require (
 	github.com/cheggaaa/pb v1.0.27
 	github.com/gofrs/flock v0.7.1
 	github.com/hashicorp/go-getter v1.4.1
-	github.com/hashicorp/go-version v1.1.0
+	github.com/hashicorp/go-version v1.4.0
 	github.com/kr/pretty v0.2.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/onsi/ginkgo v1.11.0
