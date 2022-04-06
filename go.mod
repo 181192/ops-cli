@@ -36,7 +36,7 @@ require (
 	k8s.io/client-go v0.18.0
 	k8s.io/kops v1.11.0
 	rsc.io/letsencrypt v0.0.3 // indirect
-	sigs.k8s.io/yaml v1.2.0
+	sigs.k8s.io/yaml v1.3.0
 )
 
 replace github.com/docker/docker => github.com/moby/moby v0.7.3-0.20190826074503-38ab9da00309
