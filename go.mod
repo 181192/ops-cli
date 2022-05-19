@@ -6,7 +6,7 @@ require (
 	github.com/181192/ops-cli/internal v0.1.16
 	github.com/cheggaaa/pb v2.0.7+incompatible
 	github.com/gofrs/flock v0.8.1
-	github.com/hashicorp/go-getter v1.4.1
+	github.com/hashicorp/go-getter v1.6.0
 	github.com/hashicorp/go-version v1.4.0
 	github.com/kr/pretty v0.3.0
 	github.com/mitchellh/go-homedir v1.1.0
