@@ -42,7 +42,7 @@ dockers:
       - ops
     image_templates:
       - "ghcr.io/181192/ops-cli:{{ .Version }}-amd64"
-    use_buildx: true
+    use: buildx
     build_flag_templates:
       - --platform=linux/amd64
       - --pull
@@ -60,7 +60,7 @@ dockers:
       - ops
     image_templates:
       - "ghcr.io/181192/ops-cli:{{ .Version }}-arm64"
-    use_buildx: true
+    use: buildx
     build_flag_templates:
       - --platform=linux/arm64
       - --pull
