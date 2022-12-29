@@ -1,5 +1,5 @@
 /*
-Copyright 2021 github.com/181192.
+Copyright 2022 github.com/181192.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,30 +20,29 @@ package v1alpha1
 
 import (
 	v1alpha1 "github.com/181192/ops-cli/pkg/apis/opscli.io/v1alpha1"
-	clientset "github.com/181192/ops-cli/pkg/generated/clientset/versioned/typed/opscli.io/v1alpha1"
-	informers "github.com/181192/ops-cli/pkg/generated/informers/externalversions/opscli.io/v1alpha1"
-	"github.com/rancher/wrangler/pkg/generic"
+	"github.com/rancher/lasso/pkg/controller"
+	"github.com/rancher/wrangler/pkg/schemes"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
+
+func init() {
+	schemes.Register(v1alpha1.AddToScheme)
+}
 
 type Interface interface {
 	ClusterConfig() ClusterConfigController
 }
 
-func New(controllerManager *generic.ControllerManager, client clientset.OpscliV1alpha1Interface,
-	informers informers.Interface) Interface {
+func New(controllerFactory controller.SharedControllerFactory) Interface {
 	return &version{
-		controllerManager: controllerManager,
-		client:            client,
-		informers:         informers,
+		controllerFactory: controllerFactory,
 	}
 }
 
 type version struct {
-	controllerManager *generic.ControllerManager
-	informers         informers.Interface
-	client            clientset.OpscliV1alpha1Interface
+	controllerFactory controller.SharedControllerFactory
 }
 
 func (c *version) ClusterConfig() ClusterConfigController {
-	return NewClusterConfigController(v1alpha1.SchemeGroupVersion.WithKind("ClusterConfig"), c.controllerManager, c.client, c.informers.ClusterConfigs())
+	return NewClusterConfigController(schema.GroupVersionKind{Group: "opscli.io", Version: "v1alpha1", Kind: "ClusterConfig"}, "clusterconfigs", false, c.controllerFactory)
 }
