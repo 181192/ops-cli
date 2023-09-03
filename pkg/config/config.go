@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/mitchellh/go-homedir"
+	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -62,9 +63,7 @@ func (config *Config) InitConfig() {
 	if config.CfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(config.CfgFile)
-		viper.ReadInConfig()
 	} else {
-
 		cfgDir := config.GetConfigDirectory()
 
 		if _, err := os.Stat(cfgDir); os.IsNotExist(err) {
@@ -72,18 +71,17 @@ func (config *Config) InitConfig() {
 		}
 
 		viper.SetConfigName(config.CfgName)
-
-		// Read from global config
-		global := viper.New()
-		global.SetConfigName(config.CfgName)
-		global.AddConfigPath(cfgDir)
-		global.ReadInConfig()
-
 		viper.AddConfigPath(".")
-		viper.MergeInConfig()
-
-		viper.MergeConfigMap(global.AllSettings())
+		viper.AddConfigPath(cfgDir)
 	}
+
+	// Read the configuration
+	if err := viper.ReadInConfig(); err != nil {
+		logger.Fatalf("Error reading config file: %s\n", err)
+	}
+
+	viper.AddConfigPath(config.GetConfigDirectory())
+	viper.MergeInConfig()
 
 	// Read in environment variables that match
 	viper.AutomaticEnv()
