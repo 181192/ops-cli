@@ -2,10 +2,6 @@
 
 
 
-### Synopsis
-
-
-
 ```
 ops dashboard kiali [flags]
 ```

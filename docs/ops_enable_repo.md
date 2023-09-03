@@ -2,10 +2,6 @@
 
 Set up a repo for gitops, installing Flux in the cluster and initializing its manifests
 
-### Synopsis
-
-Set up a repo for gitops, installing Flux in the cluster and initializing its manifests
-
 ```
 ops enable repo [flags]
 ```

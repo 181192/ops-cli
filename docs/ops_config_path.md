@@ -2,10 +2,6 @@
 
 Show current config path
 
-### Synopsis
-
-Show current config path
-
 ```
 ops config path [flags]
 ```

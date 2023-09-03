@@ -2,10 +2,6 @@
 
 
 
-### Synopsis
-
-
-
 ```
 ops wrapper terraform [flags]
 ```

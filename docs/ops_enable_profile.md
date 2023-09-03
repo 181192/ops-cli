@@ -2,10 +2,6 @@
 
 Enable and deploy the components from the selected profile
 
-### Synopsis
-
-Enable and deploy the components from the selected profile
-
 ```
 ops enable profile [flags]
 ```

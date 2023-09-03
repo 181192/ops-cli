@@ -2,10 +2,6 @@
 
 Show current config
 
-### Synopsis
-
-Show current config
-
 ```
 ops config show [flags]
 ```

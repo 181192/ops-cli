@@ -2,10 +2,6 @@
 
 Generate a gitops profile
 
-### Synopsis
-
-Generate a gitops profile
-
 ```
 ops generate profile [flags]
 ```

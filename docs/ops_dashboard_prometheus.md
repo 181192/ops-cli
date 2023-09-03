@@ -2,10 +2,6 @@
 
 
 
-### Synopsis
-
-
-
 ```
 ops dashboard prometheus [flags]
 ```
@@ -17,7 +13,7 @@ ops dashboard prometheus [flags]
       --kube-context string     Name of the kubeconfig context to use
       --kubeconfig string       Absolute path of the kubeconfig file to be used
   -l, --label-selector string   Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2)
-  -n, --namespace string        Name of the namespace to use. Defaults to the application default namespace. (default "monitoring")
+  -n, --namespace string        Name of the namespace to use. Defaults to the application default namespace. (default "spv-system")
   -p, --port int                Target port to forward to
   -u, --url string              Relative URL to open (e.g. /metrics)
 ```
